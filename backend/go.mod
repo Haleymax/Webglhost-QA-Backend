@@ -5,6 +5,7 @@ go 1.23.5
 require (
 	github.com/spf13/viper v1.20.1
 	gorm.io/driver/mysql v1.5.7
+	gorm.io/gorm v1.25.7
 )
 
 require (
@@ -25,5 +26,4 @@ require (
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/gorm v1.25.7 // indirect
 )
