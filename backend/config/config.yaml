@@ -4,3 +4,7 @@ mysql:
   user: "root"
   password: "root"
   dbname: "qa"
+
+server:
+  host: "localhost"
+  port: ":8088"

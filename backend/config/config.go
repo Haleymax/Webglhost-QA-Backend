@@ -8,7 +8,8 @@ import (
 )
 
 type Config struct {
-	MYSQL MySQLConfig `mapstructure:"mysql"`
+	MYSQL  MySQLConfig `mapstructure:"mysql"`
+	SERVER Server      `mapstructure:"server"`
 }
 
 func LoadConfig() *Config {
