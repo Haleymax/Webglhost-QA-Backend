@@ -22,5 +22,6 @@ func SetupRouter(router *gin.Engine, db *gorm.DB) {
 	nodes := api.Group("/nodes")
 	{
 		nodes.POST("/add", nodeController.AddNode)
+		nodes.POST("/updata", nodeController.UpdataNode)
 	}
 }
