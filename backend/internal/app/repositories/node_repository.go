@@ -11,7 +11,7 @@ import (
 type NodeRepository interface {
 	Create(node *models.Node) error
 	FindByHost(host string) (*models.Node, error)
-	Update(node models.Node) error
+	Updata(node models.Node) error
 	DeleteByHost(host string) error
 }
 
@@ -48,7 +48,7 @@ func (r *NodeRepositoryImpl) FindByHost(host string) (*models.Node, error) {
 	return &node, err
 }
 
-func (r *NodeRepositoryImpl) Update(node models.Node) error {
+func (r *NodeRepositoryImpl) Updata(node models.Node) error {
 	var existNode models.Node
 	err := r.db.Where("host = ?", node.Host).First(&existNode).Error
 	if err == gorm.ErrRecordNotFound {

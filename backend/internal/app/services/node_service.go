@@ -8,7 +8,7 @@ import (
 type NodeService interface {
 	AddNode(node *models.Node) error
 	DeleteNode(id string) error
-	UpdateNode(node *models.Node) error
+	UpdateNode(node models.Node) error
 	FindNode(id string) (*models.Node, error)
 }
 
@@ -28,8 +28,8 @@ func (s *NodeServiceImpl) DeleteNode(host string) error {
 	return s.deviceRepo.DeleteByHost(host)
 }
 
-func (s *NodeServiceImpl) UpdateNode(node *models.Node) error {
-	return s.UpdateNode(node)
+func (s *NodeServiceImpl) UpdateNode(node models.Node) error {
+	return s.deviceRepo.Updata(node)
 }
 
 func (s *NodeServiceImpl) FindNode(host string) (*models.Node, error) {

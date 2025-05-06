@@ -41,9 +41,8 @@ func (nc *NodeController) AddNode(c *gin.Context) {
 	if err := remoteClient.Connect(); err != nil {
 		log.Printf("Failed to connect to %s: %v", node.Host, err)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Failed to connect to node",
+			"message": "Failed to connect to node:" + err.Error(),
 			"status":  false,
-			"details": err.Error(),
 		})
 		return
 	}
@@ -54,7 +53,6 @@ func (nc *NodeController) AddNode(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Failed to register node",
 			"status":  false,
-			"details": err.Error(),
 		})
 		return
 	}
@@ -62,6 +60,50 @@ func (nc *NodeController) AddNode(c *gin.Context) {
 	log.Printf("Successfully added node %s", node.Host)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Node added successfully",
+		"status":  true,
+	})
+}
+
+func (nc *NodeController) UpdataNode(c *gin.Context) {
+	var node models.Node
+	if err := c.ShouldBindJSON(&node); err != nil {
+		log.Printf("Failed to bind JSON: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid request payload",
+			"status":  false,
+		})
+		return
+	}
+
+	if node.Host == "" || node.User == "" || node.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Missing required fields",
+			"status":  false,
+		})
+		return
+	}
+
+	remoteClient := remote.NewRemoteClient(node.Host, 22, node.User, node.Password)
+	if err := remoteClient.Connect(); err != nil {
+		log.Printf("Failed to connect to %s: %v", node.Host, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Failed to connect to node:" + err.Error(),
+			"status":  false,
+		})
+		return
+	}
+
+	if err := nc.deviceService.UpdateNode(node); err != nil {
+		log.Printf("Failed to update node %s: %v", node.Host, err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to register node:" + err.Error(),
+			"status":  false,
+		})
+		return
+	}
+	log.Printf("Successfully updated node %s", node.Host)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Node updated successfully",
 		"status":  true,
 	})
 }
