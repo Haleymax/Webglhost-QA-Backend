@@ -107,3 +107,46 @@ func (nc *NodeController) UpdataNode(c *gin.Context) {
 		"status":  true,
 	})
 }
+
+func (nc *NodeController) RemoveNode(c *gin.Context) {
+	host := c.Query("host")
+	if host == "" {
+		log.Printf("Failed to get host from request")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid request payload",
+			"status":  false,
+		})
+		return
+	}
+
+	if err := nc.deviceService.DeleteNode(host); err != nil {
+		log.Printf("Failed to remove node %s: %v", host, err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to remove node:" + err.Error(),
+			"status":  false,
+		})
+		return
+	}
+	log.Printf("Successfully removed node %s", host)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Node removed successfully",
+		"status":  true,
+	})
+}
+
+func (nc *NodeController) GetNodes(c *gin.Context) {
+	if _, err := nc.deviceService.FindAllNodes(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to get nodes" + err.Error(),
+			"nodes":   []map[string]string{},
+			"status":  false,
+		})
+		return
+	}
+	nodes, _ := nc.deviceService.FindAllNodes()
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully get nodes",
+		"nodes":   nodes,
+		"status":  true,
+	})
+}
