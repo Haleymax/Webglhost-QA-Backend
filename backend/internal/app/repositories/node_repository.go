@@ -13,6 +13,7 @@ type NodeRepository interface {
 	FindByHost(host string) (*models.Node, error)
 	Updata(node models.Node) error
 	DeleteByHost(host string) error
+	FindAllNodes() ([]*models.Node, error)
 }
 
 type NodeRepositoryImpl struct {
@@ -71,5 +72,17 @@ func (r *NodeRepositoryImpl) DeleteByHost(host string) error {
 	} else {
 		err = r.db.Delete(&node).Error
 		return err
+	}
+}
+
+func (r *NodeRepositoryImpl) FindAllNodes() ([]*models.Node, error) {
+	var nodes []*models.Node
+	err := r.db.Find(&nodes).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, fmt.Errorf("node doesn't exist")
+	} else if err != nil {
+		return nil, err
+	} else {
+		return nodes, nil
 	}
 }
