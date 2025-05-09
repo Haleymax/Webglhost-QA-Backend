@@ -8,3 +8,6 @@ mysql:
 server:
   host: "localhost"
   port: ":8088"
+
+remote:
+  remote_dir: "/Users/hongweihuang"

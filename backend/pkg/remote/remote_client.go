@@ -114,6 +114,26 @@ func (r RemoteClient) GetRemoteFileNames(remoteDir string) ([]string, error) {
 	return lines, nil
 }
 
+func (r RemoteClient) DeleteAPKFiles(remoteDir string) error {
+	if r.client == nil {
+		return fmt.Errorf("client is not connected")
+	}
+	fileNames, err := r.GetRemoteFileNames(remoteDir)
+	if err != nil {
+		return err
+	}
+	for _, fileName := range fileNames {
+		if strings.HasSuffix(fileName, ".apk") {
+			cmd := fmt.Sprintf("rm -f %s/%s", remoteDir, fileName)
+			_, err := r.RunCommadn(cmd)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 func (r *RemoteClient) Close() error {
 	return r.client.Close()
 }
