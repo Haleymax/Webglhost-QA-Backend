@@ -20,7 +20,7 @@ func main() {
 	}
 	defer database.CloseDB()
 
-	routers.SetupRouter(router, db)
+	routers.SetupRouter(router, db, cfg)
 
 	go func() {
 		if err := router.Run(cfg.SERVER.PORT); err != nil {

@@ -11,7 +11,7 @@ type NodeService interface {
 	AddNode(node *models.Node) error
 	DeleteNode(id string) error
 	UpdateNode(node models.Node) error
-	FindNode(id string) (*models.Node, error)
+	FindNode(host string) (*models.Node, error)
 	FindAllNodes() ([]HostMap, error)
 }
 

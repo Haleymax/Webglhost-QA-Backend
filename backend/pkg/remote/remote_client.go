@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"golang.org/x/crypto/ssh"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -134,6 +135,8 @@ func (r RemoteClient) DeleteAPKFiles(remoteDir string) error {
 	return nil
 }
 
-func (r *RemoteClient) Close() error {
-	return r.client.Close()
+func (r *RemoteClient) Close() {
+	if err := r.client.Close(); err != nil {
+		log.Printf("close remote client: %s", err)
+	}
 }

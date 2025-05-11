@@ -7,13 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
 type NodeController struct {
 	deviceService services.NodeService
+	remoteService services.RemoteService
 }
 
-func NewNodeController(deviceService services.NodeService) *NodeController {
+func NewNodeController(deviceService services.NodeService, remoteService services.RemoteService) *NodeController {
 	return &NodeController{deviceService: deviceService}
 }
 
@@ -149,4 +152,66 @@ func (nc *NodeController) GetNodes(c *gin.Context) {
 		"nodes":   nodes,
 		"status":  true,
 	})
+}
+
+func (nc *NodeController) Upload(c *gin.Context) {
+
+	file, err := c.FormFile("file")
+	host := c.PostForm("host")
+	if err != nil || host == "" {
+		log.Printf("Failed to get file: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid request payload",
+			"status":  false,
+		})
+		return
+	}
+
+	ext := filepath.Ext(file.Filename)
+	if ext != ".apk" {
+		log.Printf("Failed to get file, not an apk file")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid request payload",
+			"status":  false,
+		})
+		return
+	}
+
+	current_path, err := os.Getwd()
+	if err != nil {
+		log.Printf("Failed to get current path: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to get current path",
+			"status":  false,
+		})
+		return
+	}
+	media_path := filepath.Join(current_path, "media")
+	save_paht := filepath.Join(media_path, file.Filename)
+	if err := c.SaveUploadedFile(file, save_paht); err != nil {
+		log.Printf("Failed to save file: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to save file",
+			"status":  false,
+		})
+		return
+	}
+
+	node, _ := nc.deviceService.FindNode(host)
+
+	err = nc.remoteService.UpLoad(save_paht, *node)
+	if err != nil {
+		log.Printf("Failed to upload file: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to upload file",
+			"status":  false,
+		})
+		return
+	}
+	log.Printf("Successfully uploaded file %s", save_paht)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully uploaded file successfully",
+		"status":  true,
+	})
+
 }

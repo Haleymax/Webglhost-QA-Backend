@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/Webglhost-QA-Backend/backend/config"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/controllers"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/repositories"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/services"
@@ -8,10 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func SetupRouter(router *gin.Engine, db *gorm.DB) {
+func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config) {
 	nodeRepo := repositories.NewNodeRepository(db)
 	nodeService := services.NewNodeService(nodeRepo)
-	nodeController := controllers.NewNodeController(nodeService)
+	remoteService := services.NewRemoteService(&cfg.REMOTE)
+	nodeController := controllers.NewNodeController(nodeService, remoteService)
 	initControler := controllers.NewInitController(db)
 
 	api := router.Group("/api/v1")
@@ -25,5 +27,6 @@ func SetupRouter(router *gin.Engine, db *gorm.DB) {
 		nodes.PUT("/updata", nodeController.UpdataNode)
 		nodes.DELETE("/remove", nodeController.RemoveNode)
 		nodes.GET("/get", nodeController.GetNodes)
+		nodes.POST("/upload", nodeController.Upload)
 	}
 }
