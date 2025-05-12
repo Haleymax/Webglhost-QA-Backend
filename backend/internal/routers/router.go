@@ -28,5 +28,6 @@ func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config) {
 		nodes.DELETE("/remove", nodeController.RemoveNode)
 		nodes.GET("/get", nodeController.GetNodes)
 		nodes.POST("/upload", nodeController.Upload)
+		nodes.GET("/get_phone", nodeController.GetADBDevices)
 	}
 }

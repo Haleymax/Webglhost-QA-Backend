@@ -135,6 +135,30 @@ func (r RemoteClient) DeleteAPKFiles(remoteDir string) error {
 	return nil
 }
 
+func (r RemoteClient) GetADBDevices() ([]string, error) {
+	if r.client == nil {
+		return nil, fmt.Errorf("client is not connected")
+	}
+	cmd := "adb devices"
+	output, err := r.RunCommadn(cmd)
+	if err != nil {
+		return nil, fmt.Errorf("run command: %s, output: %s", cmd, string(output))
+	}
+	lines := strings.Split(strings.TrimSpace(output), "\n")
+	var devices []string
+
+	for _, line := range lines {
+		if strings.TrimSpace(line) == "" || strings.HasPrefix(line, "List of devices") {
+			continue
+		}
+		fields := strings.Fields(line)
+		if len(fields) == 2 && fields[1] == "device" {
+			devices = append(devices, fields[0])
+		}
+	}
+	return devices, nil
+}
+
 func (r *RemoteClient) Close() {
 	if err := r.client.Close(); err != nil {
 		log.Printf("close remote client: %s", err)

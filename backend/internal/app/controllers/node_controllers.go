@@ -215,3 +215,40 @@ func (nc *NodeController) Upload(c *gin.Context) {
 	})
 
 }
+
+func (nc *NodeController) GetADBDevices(c *gin.Context) {
+	host := c.Param("host")
+	if host == "" {
+		log.Printf("Failed to get host from request")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid request payload",
+			"status":  false,
+		})
+		return
+	}
+
+	nodes, err := nc.deviceService.FindNode(host)
+	if err != nil {
+		log.Printf("Failed to get nodes: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to get nodes",
+			"status":  false,
+		})
+		return
+	}
+	var phones []string
+	phones, err = nc.remoteService.GetPhone(*nodes)
+	if err != nil {
+		log.Printf("Failed to get phones: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to get phones",
+			"status":  false,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully get phones",
+		"nodes":   phones,
+		"status":  true,
+	})
+}
