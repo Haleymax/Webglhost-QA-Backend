@@ -9,6 +9,7 @@ import (
 
 type RemoteService interface {
 	UpLoad(filePath string, node models.Node) error
+	GetPhone(node models.Node) ([]string, error)
 }
 
 type RemoteServiceImpl struct {
@@ -39,4 +40,21 @@ func (r RemoteServiceImpl) UpLoad(filePath string, node models.Node) error {
 	}
 	return nil
 
+}
+
+func (r RemoteServiceImpl) GetPhone(node models.Node) ([]string, error) {
+	remote_client := remote.NewRemoteClient(node.Host, 22, node.User, node.Password)
+	err := remote_client.Connect()
+	if err != nil {
+		return nil, err
+	}
+	defer remote_client.Close()
+
+	// 获取远程节点中的手机
+	var phones []string
+	phones, err = remote_client.GetADBDevices()
+	if err != nil {
+		return nil, err
+	}
+	return phones, nil
 }
