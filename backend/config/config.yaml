@@ -10,4 +10,5 @@ server:
   port: ":8088"
 
 remote:
-  remote_dir: "/Users/hongweihuang"
+  remote_dir: "/Users/u3d/jenkins/workspaces/webglhost-auto-android/app"
+  adb_path: "/usr/local/platform-tools/"

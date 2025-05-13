@@ -14,10 +14,14 @@ type RemoteService interface {
 
 type RemoteServiceImpl struct {
 	RemoteDir string
+	ADBPath   string
 }
 
 func NewRemoteService(cfg *config.RemoteConfig) RemoteService {
-	return &RemoteServiceImpl{RemoteDir: cfg.REMOTEDIR}
+	return &RemoteServiceImpl{
+		RemoteDir: cfg.REMOTEDIR,
+		ADBPath:   cfg.ADBPATH,
+	}
 }
 
 func (r RemoteServiceImpl) UpLoad(filePath string, node models.Node) error {
@@ -37,6 +41,7 @@ func (r RemoteServiceImpl) UpLoad(filePath string, node models.Node) error {
 	// 通过scp将上传的文件传输给远程服务器
 	if err = remote_client.SCPUPload(filePath, r.RemoteDir); err != nil {
 		log.Printf("scp upload error: %v", err)
+		return err
 	}
 	return nil
 
@@ -52,7 +57,7 @@ func (r RemoteServiceImpl) GetPhone(node models.Node) ([]string, error) {
 
 	// 获取远程节点中的手机
 	var phones []string
-	phones, err = remote_client.GetADBDevices()
+	phones, err = remote_client.GetADBDevices(r.ADBPath)
 	if err != nil {
 		return nil, err
 	}
