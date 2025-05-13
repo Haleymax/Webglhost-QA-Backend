@@ -68,20 +68,35 @@ func (r RemoteClient) SCPUPload(localPath string, remotePath string) error {
 		return fmt.Errorf("remote mkdir: %s", err)
 	}
 
+	stdin, err := session.StdinPipe()
+	if err != nil {
+		return fmt.Errorf("create stdin pipe: %s", err)
+	}
+	defer stdin.Close()
+
 	go func() {
-		w, _ := session.StdinPipe()
-		defer w.Close()
+		defer stdin.Close()
 
-		fmt.Fprintln(w, "C%04o %d %s\n", fileInfo.Mode().Perm(), fileInfo.Size(), filepath.Base(localPath))
+		if _, err := fmt.Fprintf(stdin, "C%04o %d %s\n", fileInfo.Mode().Perm(), fileInfo.Size(), filepath.Base(localPath)); err != nil {
+			log.Printf("write to stdin: %s", err)
+			return
+		}
 
-		io.Copy(w, file)
+		if _, err := io.Copy(stdin, file); err != nil {
+			log.Printf("copy file to stdin: %s", err)
+			return
+		}
 
-		fmt.Fprintf(w, "\x00")
+		if _, err := fmt.Fprintf(stdin, "\x00"); err != nil {
+			log.Printf("write end marker to stdin: %s", err)
+			return
+		}
 	}()
 
 	if err := session.Run(fmt.Sprintf("scp -t %s", remotePath)); err != nil {
 		return fmt.Errorf("scp: %s", err)
 	}
+
 	return nil
 }
 
@@ -106,7 +121,7 @@ func (r RemoteClient) GetRemoteFileNames(remoteDir string) ([]string, error) {
 	if r.client == nil {
 		return nil, fmt.Errorf("client is not connected")
 	}
-	cmd := fmt.Sprintf("ls -l %s", remoteDir)
+	cmd := fmt.Sprintf("ls %s", remoteDir)
 	output, err := r.RunCommadn(cmd)
 	if err != nil {
 		return nil, fmt.Errorf("run command: %s, output: %s", cmd, string(output))
@@ -125,7 +140,7 @@ func (r RemoteClient) DeleteAPKFiles(remoteDir string) error {
 	}
 	for _, fileName := range fileNames {
 		if strings.HasSuffix(fileName, ".apk") {
-			cmd := fmt.Sprintf("rm -f %s/%s", remoteDir, fileName)
+			cmd := fmt.Sprintf("rm  %s/%s", remoteDir, fileName)
 			_, err := r.RunCommadn(cmd)
 			if err != nil {
 				return err
@@ -135,11 +150,11 @@ func (r RemoteClient) DeleteAPKFiles(remoteDir string) error {
 	return nil
 }
 
-func (r RemoteClient) GetADBDevices() ([]string, error) {
+func (r RemoteClient) GetADBDevices(adb_path string) ([]string, error) {
 	if r.client == nil {
 		return nil, fmt.Errorf("client is not connected")
 	}
-	cmd := "adb devices"
+	cmd := adb_path + "adb devices"
 	output, err := r.RunCommadn(cmd)
 	if err != nil {
 		return nil, fmt.Errorf("run command: %s, output: %s", cmd, string(output))

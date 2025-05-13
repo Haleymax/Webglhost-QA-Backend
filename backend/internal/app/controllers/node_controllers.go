@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 type NodeController struct {
@@ -17,7 +18,7 @@ type NodeController struct {
 }
 
 func NewNodeController(deviceService services.NodeService, remoteService services.RemoteService) *NodeController {
-	return &NodeController{deviceService: deviceService}
+	return &NodeController{deviceService: deviceService, remoteService: remoteService}
 }
 
 func (nc *NodeController) AddNode(c *gin.Context) {
@@ -187,7 +188,10 @@ func (nc *NodeController) Upload(c *gin.Context) {
 		return
 	}
 	media_path := filepath.Join(current_path, "media")
-	save_paht := filepath.Join(media_path, file.Filename)
+	now := time.Now()
+	formatted_time := now.Format("2006-01-02-15-04-05")
+	file_name := formatted_time + "-" + file.Filename
+	save_paht := filepath.Join(media_path, file_name)
 	if err := c.SaveUploadedFile(file, save_paht); err != nil {
 		log.Printf("Failed to save file: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -199,6 +203,15 @@ func (nc *NodeController) Upload(c *gin.Context) {
 
 	node, _ := nc.deviceService.FindNode(host)
 
+	if node == nil {
+		log.Printf("Failed to find node %s", host)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to find node",
+			"status":  false,
+		})
+		return
+	}
+
 	err = nc.remoteService.UpLoad(save_paht, *node)
 	if err != nil {
 		log.Printf("Failed to upload file: %v", err)
@@ -208,16 +221,25 @@ func (nc *NodeController) Upload(c *gin.Context) {
 		})
 		return
 	}
+	err = os.Remove(save_paht)
+	if err != nil {
+		log.Printf("Failed to remove local file: %v, but successful load file", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to remove local file, but successful load file",
+			"status":  false,
+		})
+		return
+	}
 	log.Printf("Successfully uploaded file %s", save_paht)
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Successfully uploaded file successfully",
+		"message": "Successfully uploaded file: " + file_name,
 		"status":  true,
 	})
 
 }
 
 func (nc *NodeController) GetADBDevices(c *gin.Context) {
-	host := c.Param("host")
+	host := c.Query("host")
 	if host == "" {
 		log.Printf("Failed to get host from request")
 		c.JSON(http.StatusBadRequest, gin.H{

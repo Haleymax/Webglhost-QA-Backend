@@ -1,6 +1,6 @@
 mysql:
   host: "localhost"
-  port: "3308"
+  port: "3306"
   user: "root"
   password: "root"
   dbname: "qa"
@@ -10,4 +10,5 @@ server:
   port: ":8088"
 
 remote:
-  remote_dir: "/Users/hongweihuang"
+  remote_dir: "/Users/u3d/jenkins/workspaces/webglhost-auto-android/app"
+  adb_path: "/usr/local/platform-tools/"
