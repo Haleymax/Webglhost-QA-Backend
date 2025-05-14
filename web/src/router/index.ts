@@ -14,6 +14,11 @@ const routes = [
     name: 'Index',
     component: Index,
   },
+  {
+    path: '/upload',
+    name: 'Upload',
+    component: () => import('@/pages/device/upload.vue'),
+  }
 ]
 
 const router = createRouter({
