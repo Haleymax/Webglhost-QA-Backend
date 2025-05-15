@@ -31,7 +31,7 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-item to="/add_node">
+        <v-list-item to="/device">
           <v-list-item-icon>
             <v-icon>mdi-cloud-arrow-up-outline</v-icon>
           </v-list-item-icon>
