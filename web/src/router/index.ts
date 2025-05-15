@@ -18,6 +18,11 @@ const routes = [
     path: '/upload',
     name: 'Upload',
     component: () => import('@/pages/device/upload.vue'),
+  },
+  {
+    path: '/device',
+    name: 'Device',
+    component: () => import('@/components/add_node.vue'),
   }
 ]
 
