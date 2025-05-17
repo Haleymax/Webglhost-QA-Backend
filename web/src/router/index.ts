@@ -22,7 +22,7 @@ const routes = [
   {
     path: '/device',
     name: 'Device',
-    component: () => import('@/components/add_node.vue'),
+    component: () => import('@/pages/device/device_manage.vue'),
   }
 ]
 
