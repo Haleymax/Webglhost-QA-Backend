@@ -44,16 +44,26 @@
             <template v-slot:item.action="{ item }">
                 <v-btn
                     icon
-                    @click="() => { console.log(item) }"
+                    @click="del = true"
                 >
                     <v-icon>mdi-delete</v-icon>
                 </v-btn>
+                
                 <v-btn
                     icon
-                    @click="() => { console.log(item) }"
+                    @click="update = true"
                 >
                     <v-icon>mdi-pencil</v-icon>
                 </v-btn>
+                <v-dialog
+                    v-model="update"
+                    max-width="600px"
+                >
+                    <v-card>
+                        <v-card-title>更新节点</v-card-title>
+                        <UpdataNode />
+                    </v-card>
+                </v-dialog>
             </template> 
         </v-data-table>
     </v-card>
@@ -61,11 +71,18 @@
 
 <script setup lang="ts" name="DeviceManage">
 import AddNode from '@/components/add_node.vue'
-import { h, ref } from 'vue'
+import UpdataNode from '@/components/updata_node.vue'
+import { h, onMounted, ref } from 'vue'
+import { type nodesResponse} from '@/api/response_data'
+import { getNodes } from '@/api/device'
 
 const search = ref('')
 
 const dialog = ref(false)
+const nodes = ref()
+
+const del = ref(false)
+const update = ref(false)
 
 const headers = [
     { text: '节点名称', value: 'name' },
@@ -73,14 +90,16 @@ const headers = [
     { text: '操作', value: 'action', sortable: false },
 ]
 
-const nodes = [
-    { name: '节点1', host: '10.86.97.1' },
-    { name: '节点2', host: '10.86.97.2' },
-    { name: '节点3', host: '10.86.97.3' },
-    { name: '节点4', host: '10.86.97.4' },
-    { name: '节点5', host: '10.86.97.5' },
-    { name: '节点6', host: '10.86.97.6' },
-]
+onMounted(async() => {
+    const res:nodesResponse = await getNodes()
+    console.log('获取节点列表', res)
+    if (res.status) {
+        nodes.value = res.nodes
+        console.log('获取节点列表成功', res.nodes)
+    } else {
+        alert('获取节点列表失败: ' + res.message)
+    }
+})
 
 
 </script>

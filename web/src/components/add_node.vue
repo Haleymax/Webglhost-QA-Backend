@@ -62,9 +62,11 @@
 
 <script setup lang="ts" name="AddNode">
 import { ref } from 'vue'
+import  {addNode, type Node} from '@/api/device'
+import type { baseResponse } from '@/api/response_data'
 
 const host = ref('')
-const port = ref('')
+const port = ref()
 const user = ref('')
 const password = ref('')
 
@@ -83,10 +85,24 @@ const passwordRules = [
 ]
 const formRef = ref()
 const valid = ref(false)
-const handleSubmit = () => {
+const handleSubmit = async() => {
     if (valid.value) {
-        // 提交表单
-        console.log('提交表单', { host: host.value, port: port.value, user: user.value, password: password.value })
+        const node: Node = {
+            host: host.value,
+            port: port.value,
+            user: user.value,
+            password: password.value,
+        }
+
+        const res: baseResponse = (await addNode(node)).data
+        if (res.status) {
+            alert('添加节点成功: ' + res.message)
+        } else {
+            alert('添加节点失败: ' + res.message)
+        }
+        
+
+        console.log('添加节点', { host: host.value, port: port.value, user: user.value, password: password.value })
     } else {
         console.log('表单验证失败')
     }
