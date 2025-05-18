@@ -22,7 +22,7 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-item to="/add_device">
+        <v-list-item to="/updata">
           <v-list-item-icon>
             <v-icon>mdi-database</v-icon>
           </v-list-item-icon>

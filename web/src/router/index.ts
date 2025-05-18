@@ -23,6 +23,11 @@ const routes = [
     path: '/device',
     name: 'Device',
     component: () => import('@/pages/device/device_manage.vue'),
+  },
+  {
+    path: '/updata',
+    name: 'Updata',
+    component: () => import('@/components/updata_node.vue'),
   }
 ]
 
@@ -31,7 +36,7 @@ const router = createRouter({
   routes,
 })
 
-// Workaround for https://github.com/vitejs/vite/issues/11804
+
 router.onError((err, to) => {
   if (err?.message?.includes?.('Failed to fetch dynamically imported module')) {
     if (!localStorage.getItem('vuetify:dynamic-reload')) {
