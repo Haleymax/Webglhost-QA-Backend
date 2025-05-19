@@ -39,7 +39,9 @@
 
 
 <script setup lang="ts" name="Upload">
-import { ref } from 'vue'
+import { h, onMounted, ref } from 'vue'
+import { type nodesResponse} from '@/api/response_data'
+import { getNodes } from '@/api/device'
 
 
 
@@ -48,14 +50,7 @@ const file = ref<File | null>(null)
 const formRef = ref()
 const valid = ref(false)
 
-const nodes = [
-    { name: '节点1', host: '10.86.97.1' },
-    { name: '节点2', host: '10.86.97.2' },
-    { name: '节点3', host: '10.86.97.3' },
-    { name: '节点4', host: '10.86.97.4' },
-    { name: '节点5', host: '10.86.97.5' },
-    { name: '节点6', host: '10.86.97.6' },
-]
+const nodes = ref([])
 
 const HostRules = [
     (v: string) => !!v || '主机地址不能为空',
@@ -72,5 +67,15 @@ const handleSubmit = () => {
     })
     alert('表单数据已提交')
 }
+
+onMounted(async() => {
+    const res:nodesResponse = await getNodes()
+    console.log('获取节点列表', res)
+    if (res.status) {
+        nodes.value = res.nodes
+    } else {
+        alert('获取节点列表失败: ' + res.message)
+    }
+})
 
 </script>

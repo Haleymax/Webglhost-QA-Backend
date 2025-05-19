@@ -61,7 +61,7 @@
                 >
                     <v-card>
                         <v-card-title>更新节点</v-card-title>
-                        <UpdataNode />
+                        <UpdataNode :parentData="item.host"/>
                     </v-card>
                 </v-dialog>
             </template> 
