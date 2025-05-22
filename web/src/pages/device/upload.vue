@@ -41,14 +41,15 @@
 <script setup lang="ts" name="Upload">
 import { h, onMounted, ref } from 'vue'
 import { type nodesResponse} from '@/api/response_data'
-import { getNodes } from '@/api/device'
+import { getNodes} from '@/api/device'
+import { uploadFile } from '@/api/device'
 
 
 
 const host = ref('')
 const file = ref<File | null>(null)
 const formRef = ref()
-const valid = ref(false)
+const valid = ref(true)
 
 const nodes = ref([])
 
@@ -60,12 +61,27 @@ const FileRules = [
     (v: File | null) => !!v || '文件不能为空',
 ]
 
-const handleSubmit = () => {
-    console.log('表单数据:', {
-        host: host.value,
-        file: file.value,
-    })
-    alert('表单数据已提交')
+const handleSubmit = async () => {
+    const isValid = await formRef.value?.validate?.()
+    if (!isValid) return
+    if (!file.value) {
+        alert('请选择文件')
+        return
+    }
+    try {
+        const formData = new FormData()
+        formData.append('host', host.value)
+        formData.append('file', file.value)
+        const res: nodesResponse = await uploadFile(formData)
+        if (res.status) {
+            alert('上传文件成功')
+        } else {
+            alert('上传文件失败: ' + res.message)
+        }
+    } catch (e) {
+        alert('上传异常')
+    } finally {
+    }
 }
 
 onMounted(async() => {

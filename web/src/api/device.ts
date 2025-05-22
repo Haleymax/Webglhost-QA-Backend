@@ -36,3 +36,19 @@ export const updataNode = (node: updata) => {
         data: node
     })
 }
+
+export const deleteNode = (host: string) => {
+    return request({
+        url: '/api/nodes/remove',
+        method: 'delete',
+        data: host
+    })
+}
+
+export const uploadFile = (data: FormData) => {
+    return request({
+        url: '/api/nodes/upload',
+        method: 'post',
+        data: data,
+    })
+}
