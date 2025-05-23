@@ -11,6 +11,7 @@ type Config struct {
 	MYSQL  MySQLConfig  `mapstructure:"mysql"`
 	SERVER Server       `mapstructure:"server"`
 	REMOTE RemoteConfig `mapstructure:"remote"`
+	MONGO  MongoConfig  `mapstructure:"mongo"`
 }
 
 func LoadConfig() *Config {
