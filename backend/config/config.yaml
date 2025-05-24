@@ -5,6 +5,12 @@ mysql:
   password: "root"
   dbname: "qa"
 
+mongo:
+  host: "10.86.97.157"
+  port: "27017"
+  user: "admin"
+  password: "secret"
+
 server:
   host: "localhost"
   port: ":8088"
