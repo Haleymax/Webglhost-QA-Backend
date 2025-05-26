@@ -15,12 +15,19 @@ func main() {
 	router := gin.Default()
 	cfg := config.LoadConfig()
 	db, err := database.InitDB(&cfg.MYSQL)
+
 	if err != nil {
 		log.Fatalf("Failed to initialize database:%v", err)
 	}
 	defer database.CloseDB()
 
-	routers.SetupRouter(router, db, cfg)
+	mongo, err := database.InitMongo(&cfg.MONGO)
+	if err != nil {
+		log.Fatalf("Failed to initialize mongo:%v", err)
+	}
+	defer database.MongoClose()
+
+	routers.SetupRouter(router, db, cfg, mongo)
 
 	go func() {
 		if err := router.Run(cfg.SERVER.PORT); err != nil {

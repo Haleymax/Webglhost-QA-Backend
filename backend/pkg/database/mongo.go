@@ -14,7 +14,7 @@ import (
 var MongoClient *mongo.Client
 
 func InitMongo(cfg *config.MongoConfig) (*mongo.Client, error) {
-	url := fmt.Sprintf("mongodb://%s:%s@%s:%d", cfg.USER, cfg.PWD, cfg.HOST, cfg.PORT)
+	url := fmt.Sprintf("mongodb://%s:%d/", cfg.HOST, cfg.PORT)
 	clientOptions := options.Client().ApplyURI(url)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -34,7 +34,7 @@ func InitMongo(cfg *config.MongoConfig) (*mongo.Client, error) {
 	return MongoClient, nil
 }
 
-func Close() error {
+func MongoClose() error {
 	if MongoClient != nil {
 		return MongoClient.Disconnect(context.Background())
 	}

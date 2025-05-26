@@ -6,14 +6,18 @@ import (
 	"github.com/Webglhost-QA-Backend/backend/internal/app/repositories"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/services"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 )
 
-func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config) {
+func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mongo.Client) {
 	nodeRepo := repositories.NewNodeRepository(db)
+	watcherRepo := repositories.NewWatcherRepository(mongo)
 	nodeService := services.NewNodeService(nodeRepo)
 	remoteService := services.NewRemoteService(&cfg.REMOTE)
+	watcherService := services.NewWatcherService(watcherRepo)
 	nodeController := controllers.NewNodeController(nodeService, remoteService)
+	watcherController := controllers.NewWatcherController(watcherService)
 	initControler := controllers.NewInitController(db)
 
 	api := router.Group("/api/v1")
@@ -29,5 +33,10 @@ func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config) {
 		nodes.GET("/get", nodeController.GetNodes)
 		nodes.POST("/upload", nodeController.Upload)
 		nodes.GET("/get_phone", nodeController.GetADBDevices)
+	}
+	watchers := api.Group("/watchers")
+	{
+		watchers.GET("/find", watcherController.FindAllWatchers)
+		watchers.POST("/add", watcherController.AddWatcher)
 	}
 }
