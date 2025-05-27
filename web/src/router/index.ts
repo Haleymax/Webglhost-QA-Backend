@@ -33,6 +33,11 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: () => import('@/pages/home/home.vue'),
+  },
+  {
+    path: '/watcher',
+    name: 'Watcher',
+    component: () => import('@/pages/watcher/watcher_manage.vue'),
   }
 ]
 

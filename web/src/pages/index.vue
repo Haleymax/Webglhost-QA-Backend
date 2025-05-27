@@ -40,6 +40,15 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
+          <v-list-item to="/watcher">
+            <v-list-item-icon>
+              <v-icon>mdi-eye</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>监控管理</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      <v-divider></v-divider>
       </v-list>
     </v-navigation-drawer>
 
