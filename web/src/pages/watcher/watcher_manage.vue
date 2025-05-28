@@ -8,7 +8,7 @@
                 <v-col cols="10">
                     <v-text-field
                         v-model="search"
-                        label="查找监控"
+                        label="查找watcher"
                         prepend-inner-icon="mdi-magnify"
                         variant="outlined"
                         hide-details
@@ -20,7 +20,7 @@
                         color="primary"
                         @click="dialog = true"
                     >
-                    添加监控
+                    添加watcher
                 </v-btn>
 
                 <v-dialog
@@ -28,7 +28,7 @@
                     max-width="600px"
                 >
                     <v-card>
-                        <v-card-title>添加监控</v-card-title>
+                        <v-card-title>添加watcher</v-card-title>
                         <!-- AddWatcher component should be defined elsewhere -->
                         <AddWatcher />
                     </v-card>
@@ -67,23 +67,35 @@
 
 <script setup lang="ts" name="WatcherManage">
 
+import { getWatchers } from '@/api/watcher'
+import { onMounted, ref } from 'vue'
+import { type Watcher } from '@/api/watcher'
+
 const headers = [
-    { text: 'ID', value: 'id' },
     { text: '名称', value: 'name' },
     { text: '类型', value: 'type' },
+    { text: '资源', value: 'resource' },
+    { text: '点击', value: 'click' },
+    { text: '品牌', value: 'brand' },
+    { text: '标签', value: 'tag' },
     { text: '操作', value: 'action', sortable: false }
 ]
 
-import { ref } from 'vue'
-
-const watchers = ref([
-    { id: 1, name: '监控1', type: '类型A' },
-    { id: 2, name: '监控2', type: '类型B' },
-    { id: 3, name: '监控3', type: '类型C' }
-])
+const watchers = ref<Watcher[]>([])
 
 const search = ref('')
 const dialog = ref(false)
 const del = ref(false)
 const update = ref(false)
+
+
+onMounted(async () => {
+    const res:any = await getWatchers()
+    if (res.status) {
+        watchers.value = res.watcher
+    } else {
+        console.error('获取监控列表失败:', res.message)
+    }
+})
+
 </script>

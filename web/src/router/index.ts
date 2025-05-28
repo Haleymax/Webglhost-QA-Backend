@@ -27,7 +27,7 @@ const routes = [
   {
     path: '/updata',
     name: 'Updata',
-    component: () => import('@/components/updata_node.vue'),
+    component: () => import('@/components/node/updata_node.vue'),
   },
   {
     path: '/home',

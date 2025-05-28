@@ -8,11 +8,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    Add_node: typeof import('./components/add_node.vue')['default']
-    HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    Add_node: typeof import('./components/node/add_node.vue')['default']
+    Add_watcher: typeof import('./components/watcher/add_watcher.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Updata_node: typeof import('./components/updata_node.vue')['default']
-    Upload_node: typeof import('./components/upload_node.vue')['default']
+    Updata_node: typeof import('./components/node/updata_node.vue')['default']
   }
 }
