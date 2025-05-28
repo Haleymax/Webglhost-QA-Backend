@@ -34,7 +34,7 @@ func (wc *WatcherController) FindAllWatchers(c *gin.Context) {
 	log.Printf("successful query data %v", watchers)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully get watchers",
-		"data":    watchers,
+		"watcher": watchers,
 		"status":  true,
 	})
 }
