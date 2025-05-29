@@ -2,6 +2,7 @@ package remote
 
 import (
 	"fmt"
+	"github.com/Webglhost-QA-Backend/backend/internal/app/models"
 	"golang.org/x/crypto/ssh"
 	"io"
 	"log"
@@ -172,6 +173,62 @@ func (r RemoteClient) GetADBDevices(adb_path string) ([]string, error) {
 		}
 	}
 	return devices, nil
+}
+
+func (r RemoteClient) getDeviceProperty(serial, prop string) string {
+	cmd := fmt.Sprintf("adb -s %s shell getprop %s", serial, prop)
+	result, err := r.RunCommadn(cmd)
+	if err != nil {
+		return "Unknown"
+	}
+	result = strings.TrimSpace(result)
+	if len(result) < 2 {
+		return "Unknown"
+	}
+	return result
+}
+
+func (r RemoteClient) getDeviceMarketName(serial string) string {
+	marketProps := []string{
+		MarketNames.OPPO,
+		MarketNames.HONOR,
+		MarketNames.XIAOMI,
+		MarketNames.IQOO,
+		MarketNames.HUAWEI,
+		MarketNames.ONEPLUS,
+		MarketNames.REDMI,
+	}
+
+	for _, prop := range marketProps {
+		result := r.getDeviceProperty(serial, prop)
+		if result != "Unknown" && len(result) > 1 {
+			return result
+		}
+	}
+	return "Market name not found"
+}
+
+func (r RemoteClient) GetPhoneInfo(adb_path, serial string) (models.Phone, error) {
+	if r.client == nil {
+		return models.Phone{}, fmt.Errorf("client is not connected")
+	}
+
+	manufacturer := r.getDeviceProperty(serial, "ro.product.manufacturer")
+	model := r.getDeviceProperty(serial, "ro.product.model")
+	androidVersion := r.getDeviceProperty(serial, "ro.build.version.release")
+	cpuAbi := r.getDeviceProperty(serial, "ro.product.cpu.abi")
+	marketName := r.getDeviceMarketName(serial)
+
+	phone := models.Phone{
+		Manufacturer:   manufacturer,
+		Model:          model,
+		AndroidVersion: androidVersion,
+		Cpuabi:         cpuAbi,
+		MarketName:     marketName,
+		Serial:         serial,
+	}
+
+	return phone, nil
 }
 
 func (r *RemoteClient) Close() {
