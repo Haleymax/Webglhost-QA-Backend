@@ -67,7 +67,7 @@ func (wc *WatcherController) AddWatcher(c *gin.Context) {
 		})
 		return
 	}
-	if exist != nil {
+	if exist != nil && exist.Click == watcher.Click {
 		log.Printf("data %v, exists, cant add", exist.Resource)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "data" + exist.Resource + ", exists, cant add",
@@ -139,6 +139,56 @@ func (wc *WatcherController) UpdataWatcher(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully update watcher",
+		"status":  true,
+	})
+}
+
+func (wc *WatcherController) DeleteWatcher(c *gin.Context) {
+	var watcher models.Watcher
+	if err := c.BindJSON(&watcher); err != nil {
+		log.Printf("fail to get data: %v", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "fail to get watcher" + err.Error(),
+			"status":  false,
+		})
+		return
+	}
+
+	if watcher.ID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "the data id cannot be empty",
+			"status":  false,
+		})
+		return
+	}
+
+	exist, err := wc.WatcherService.FindByIdWatcher(&watcher)
+	if err != nil {
+		log.Printf("fail to query data %v", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "fail to get watcher" + err.Error(),
+			"status":  false,
+		})
+		return
+	}
+	if exist == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "data" + exist.Resource + ", dont exists, cant delete",
+			"status":  false,
+		})
+		return
+	}
+	err = wc.WatcherService.DeleteWatcher(&watcher)
+	if err != nil {
+		log.Printf("fail to delete watcher %v", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "fail to delete watcher" + err.Error(),
+			"status":  false,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully delete watcher",
 		"status":  true,
 	})
 }

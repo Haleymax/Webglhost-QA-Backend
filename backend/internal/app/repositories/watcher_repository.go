@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 )
@@ -18,6 +19,7 @@ type WatcherRepository interface {
 	Update(watcher *models.Watcher) error
 	FindAll() ([]*models.Watcher, error)
 	FindOne(filter interface{}) (*models.Watcher, error)
+	FindByID(watcher *models.Watcher) (*models.Watcher, error)
 }
 
 type WatcherRepositoryImpl struct {
@@ -46,7 +48,8 @@ func (r *WatcherRepositoryImpl) Delete(watcher *models.Watcher) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	filter := bson.M{"_id": watcher.ID}
+	objID, _ := primitive.ObjectIDFromHex(watcher.ID)
+	filter := bson.M{"_id": objID}
 
 	_, err := r.GetCollection().DeleteOne(ctx, filter)
 	return err
@@ -55,9 +58,16 @@ func (r *WatcherRepositoryImpl) Delete(watcher *models.Watcher) error {
 func (r *WatcherRepositoryImpl) Update(watcher *models.Watcher) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+	objID, _ := primitive.ObjectIDFromHex(watcher.ID)
+	filter := bson.M{"_id": objID}
 
-	filter := bson.M{"_id": watcher.ID}
-	update := bson.M{"$set": watcher}
+	newData := map[string]interface{}{
+		"name":     watcher.Name,
+		"resource": watcher.Resource,
+		"brand":    watcher.Brand,
+		"tag":      watcher.Tag,
+	}
+	update := bson.M{"$set": newData}
 	_, err := r.GetCollection().UpdateOne(ctx, filter, update)
 	return err
 }
@@ -105,4 +115,26 @@ func (r *WatcherRepositoryImpl) FindOne(filter interface{}) (*models.Watcher, er
 		return nil, err
 	}
 	return &watcher, nil
+}
+
+func (r *WatcherRepositoryImpl) FindByID(watcher *models.Watcher) (*models.Watcher, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	objID, _ := primitive.ObjectIDFromHex(watcher.ID)
+	filter := bson.M{"_id": objID}
+	cursor, err := r.GetCollection().Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+	for cursor.Next(ctx) {
+		if err := cursor.Decode(&watcher); err != nil {
+			return nil, err
+		}
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+	return watcher, nil
 }

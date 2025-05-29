@@ -38,5 +38,7 @@ func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mon
 	{
 		watchers.GET("/find", watcherController.FindAllWatchers)
 		watchers.POST("/add", watcherController.AddWatcher)
+		watchers.PUT("/update", watcherController.UpdataWatcher)
+		watchers.DELETE("/delete", watcherController.DeleteWatcher)
 	}
 }
