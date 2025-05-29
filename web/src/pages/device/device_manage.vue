@@ -2,7 +2,7 @@
     <v-card
         title="节点管理"
         flat
-    > 
+    >
         <template v-slot:text>
             <v-row align="center">
                 <v-col cols = "10">
@@ -48,7 +48,7 @@
                 >
                     <v-icon>mdi-delete</v-icon>
                 </v-btn>
-                
+
                 <v-btn
                     icon
                     @click="update = true"
@@ -64,14 +64,14 @@
                         <UpdataNode :parentData="item.host"/>
                     </v-card>
                 </v-dialog>
-            </template> 
+            </template>
         </v-data-table>
     </v-card>
 </template>
 
 <script setup lang="ts" name="DeviceManage">
-import AddNode from '@/components/add_node.vue'
-import UpdataNode from '@/components/updata_node.vue'
+import AddNode from '@/components/node/add_node.vue'
+import UpdataNode from '@/components/node/updata_node.vue'
 import { h, onMounted, ref } from 'vue'
 import { type nodesResponse} from '@/api/response_data'
 import { getNodes } from '@/api/device'

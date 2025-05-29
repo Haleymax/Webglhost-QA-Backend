@@ -5,10 +5,10 @@
     >
         <template v-slot:text>
             <v-row align="center">
-                <v-col cols="10">
+                <v-col cols="8">
                     <v-text-field
                         v-model="search"
-                        label="查找监控"
+                        label="查找watcher"
                         prepend-inner-icon="mdi-magnify"
                         variant="outlined"
                         hide-details
@@ -20,7 +20,7 @@
                         color="primary"
                         @click="dialog = true"
                     >
-                    添加监控
+                    添加watcher
                 </v-btn>
 
                 <v-dialog
@@ -28,12 +28,19 @@
                     max-width="600px"
                 >
                     <v-card>
-                        <v-card-title>添加监控</v-card-title>
-                        <!-- AddWatcher component should be defined elsewhere -->
-                        <AddWatcher />
+                        <v-card-title>添加watcher</v-card-title>
+                        <AddWatcher/>
                     </v-card>
                 </v-dialog>
 
+                </v-col>
+                <v-col cols="2">
+                    <v-btn
+                        color="primary"
+                        @click=handleUpdate
+                    >
+                    刷新
+                </v-btn>
                 </v-col>
             </v-row>
         </template>
@@ -45,14 +52,14 @@
             <template v-slot:item.action="{ item }">
                 <v-btn
                     icon
-                    @click="del = true"
+                    @click="handleDelete(item)"
                 >
                     <v-icon>mdi-delete</v-icon>
                 </v-btn>
 
                 <v-btn
                     icon
-                    @click="update = true"
+                    @click="openEditDialog(item)"
                 >
                     <v-icon>mdi-pencil</v-icon>
                 </v-btn>
@@ -60,30 +67,74 @@
         </v-data-table>
         <v-dialog
             v-model="update"
-            max-width="600px">
-            </v-dialog>
+            max-width="600px"
+        >
+            <v-card>
+                <v-card-title>更新watcher</v-card-title>
+                <UpdateWatcher v-if="editWatcher" :parentData="editWatcher"/>
+            </v-card>
+        </v-dialog>
     </v-card>
 </template>
 
 <script setup lang="ts" name="WatcherManage">
 
+import { getWatchers } from '@/api/watcher'
+import { onMounted, ref } from 'vue'
+import { type Watcher , deleteWatcher} from '@/api/watcher'
+import AddWatcher from '@/components/watcher/add_watcher.vue'
+import UpdateWatcher from '@/components/watcher/update_watcher.vue'
+
 const headers = [
-    { text: 'ID', value: 'id' },
     { text: '名称', value: 'name' },
     { text: '类型', value: 'type' },
+    { text: '资源', value: 'resource' },
+    { text: '点击', value: 'click' },
+    { text: '品牌', value: 'brand' },
+    { text: '标签', value: 'tag' },
     { text: '操作', value: 'action', sortable: false }
 ]
 
-import { ref } from 'vue'
-
-const watchers = ref([
-    { id: 1, name: '监控1', type: '类型A' },
-    { id: 2, name: '监控2', type: '类型B' },
-    { id: 3, name: '监控3', type: '类型C' }
-])
+const watchers = ref<Watcher[]>([])
 
 const search = ref('')
 const dialog = ref(false)
-const del = ref(false)
 const update = ref(false)
+const editWatcher = ref<Watcher | null>(null) // 新增
+
+onMounted(async () => {
+    const res:any = await getWatchers()
+    if (res.status) {
+        watchers.value = res.watcher
+    } else {
+        console.error('获取监控列表失败:', res.message)
+    }
+})
+
+const handleDelete = async (watcher: Watcher) => {
+    console.log('删除watcher ID:', watcher.id)
+    const res = await deleteWatcher(watcher)
+    if (res.status) {
+        console.log('删除成功:', res.message)
+        alert('删除成功: ' + res.message)
+        handleUpdate(watcher)
+    } else {
+        console.error('删除失败:', res.message)
+    }
+}
+
+const handleUpdate = async (watcher?: Watcher) => {
+    const res = await getWatchers()
+    if (res.status) {
+        watchers.value = res.watcher
+    } else {
+        console.error('获取监控列表失败:', res.message)
+    }
+}
+
+const openEditDialog = (watcher: Watcher) => {
+    editWatcher.value = watcher
+    update.value = true
+}
+
 </script>

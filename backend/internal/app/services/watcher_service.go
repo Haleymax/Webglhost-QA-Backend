@@ -11,6 +11,7 @@ type WatcherService interface {
 	UpdateWatcher(watcher *models.Watcher) error
 	FindAllWatchers() ([]*models.Watcher, error)
 	FindOneWatcher(resourceId string) (*models.Watcher, error)
+	FindByIdWatcher(watcher *models.Watcher) (*models.Watcher, error)
 }
 
 type WatcherServiceImpl struct {
@@ -44,4 +45,8 @@ func (s *WatcherServiceImpl) FindOneWatcher(resourceId string) (*models.Watcher,
 		"resource": resourceId,
 	}
 	return s.watcherRepo.FindOne(filter)
+}
+
+func (s *WatcherServiceImpl) FindByIdWatcher(watcher *models.Watcher) (*models.Watcher, error) {
+	return s.watcherRepo.FindByID(watcher)
 }

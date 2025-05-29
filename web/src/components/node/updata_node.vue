@@ -56,7 +56,6 @@ import type { baseResponse } from '@/api/response_data'
 
 
 const valid = ref(true)
-const formRef = ref()
 
 const props = defineProps({
     parentData: String
@@ -84,7 +83,7 @@ const nameRules = [
 ]
 
 const handleSubmit = async() => {
-    
+
     if (valid.value) {
         const node:updata = {
             host: host,
