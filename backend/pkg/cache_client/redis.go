@@ -1,4 +1,4 @@
-package cache
+package cache_client
 
 import (
 	"context"
@@ -82,7 +82,7 @@ func (r *Redis) SetKey(space, env, runtime string, watcher WatcherCache) error {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	pattern := fmt.Sprintf("%s:%s:%s:%s", env, runtime, space, watcher.Brand, watcher.Tag)
+	pattern := fmt.Sprintf("%s:%s:%s:%s:%s", env, runtime, space, watcher.Brand, watcher.Tag)
 	value := map[string]string{
 		"name":     watcher.Name,
 		"resource": watcher.Resource,
@@ -117,7 +117,7 @@ func Convert(watchers []models.Watcher, brand, tag string) []WatcherCache {
 	/*
 		将数据库中的转换为方便插入到redis中的格式
 	*/
-	result := make([]WatcherCache, len(watchers))
+	var result []WatcherCache
 	for _, watcher := range watchers {
 		data := new(WatcherCache)
 		data.Brand = brand

@@ -8,3 +8,8 @@ type Watcher struct {
 	Brand    []string `json:"brand" bson:"brand"`
 	Tag      []string `json:"tag" bson:"tag"`
 }
+
+type WatcherRequest struct {
+	Env     string `json:"env"`
+	Runtime string `json:"runtime"`
+}

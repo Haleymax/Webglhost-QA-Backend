@@ -3,7 +3,6 @@ package controllers
 import (
 	"github.com/Webglhost-QA-Backend/backend/internal/app/models"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/services"
-	"github.com/Webglhost-QA-Backend/backend/pkg/cache"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -195,7 +194,7 @@ func (wc *WatcherController) DeleteWatcher(c *gin.Context) {
 }
 
 func (wc *WatcherController) RefreshCache(c *gin.Context) {
-	parameter := cache.WatcherRequest{}
+	parameter := models.WatcherRequest{}
 	if err := c.BindJSON(&parameter); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "fail to bind data",
@@ -203,5 +202,16 @@ func (wc *WatcherController) RefreshCache(c *gin.Context) {
 		})
 		return
 	}
+	if err := wc.WatcherService.RefreshCache(parameter.Env, parameter.Runtime); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "fail to refresh cache" + err.Error(),
+			"status":  false,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully refresh cache",
+		"status":  true,
+	})
 
 }

@@ -3,8 +3,7 @@ package services
 import (
 	"github.com/Webglhost-QA-Backend/backend/internal/app/models"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/repositories"
-	"github.com/Webglhost-QA-Backend/backend/pkg/cache"
-	"github.com/Webglhost-QA-Backend/backend/util"
+	"github.com/Webglhost-QA-Backend/backend/pkg/cache_client"
 )
 
 type WatcherService interface {
@@ -19,10 +18,10 @@ type WatcherService interface {
 
 type WatcherServiceImpl struct {
 	watcherRepo repositories.WatcherRepository
-	redis       *cache.Redis
+	redis       *cache_client.Redis
 }
 
-func NewWatcherService(repo repositories.WatcherRepository, cache *cache.Redis) *WatcherServiceImpl {
+func NewWatcherService(repo repositories.WatcherRepository, cache *cache_client.Redis) *WatcherServiceImpl {
 	return &WatcherServiceImpl{
 		watcherRepo: repo,
 		redis:       cache,
@@ -62,7 +61,8 @@ func (s *WatcherServiceImpl) RefreshCache(env, runtime string) error {
 		return err
 	}
 	space := "watcher"
-	brands := util.Get_all_brand_from_watcher(watchers)
+	brands := cache_client.Get_all_brand_from_watcher(watchers)
+	s.redis.ClearKey(space, env, runtime)
 	for _, brand := range brands {
 		permissionFilter := map[string]string{
 			"brand": brand,
@@ -72,9 +72,9 @@ func (s *WatcherServiceImpl) RefreshCache(env, runtime string) error {
 		if err2 != nil {
 			return err2
 		}
-		permissionDatas := util.Convert(permissionWatchers, brand, permissionFilter["tag"])
+		permissionDatas := cache_client.Convert(permissionWatchers, brand, permissionFilter["tag"])
 		for _, oneData := range permissionDatas {
-			s.redis.SetKey(space, env, runtime, oneData)
+			s.redis.SetKey(space, env, runtime, cache_client.WatcherCache(oneData))
 		}
 
 		installFilter := map[string]string{
@@ -85,9 +85,9 @@ func (s *WatcherServiceImpl) RefreshCache(env, runtime string) error {
 		if err3 != nil {
 			return err2
 		}
-		installDatas := util.Convert(installWatchers, brand, installFilter["tag"])
+		installDatas := cache_client.Convert(installWatchers, brand, installFilter["tag"])
 		for _, oneData := range installDatas {
-			s.redis.SetKey(space, env, runtime, oneData)
+			s.redis.SetKey(space, env, runtime, cache_client.WatcherCache(oneData))
 		}
 	}
 	return nil

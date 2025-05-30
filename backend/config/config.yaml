@@ -20,6 +20,6 @@ remote:
   adb_path: "/usr/local/platform-tools/"
 
 redis:
-  host: "10.86.97.133"
+  host: "127.0.0.1"
   port: 6379
   db: 0

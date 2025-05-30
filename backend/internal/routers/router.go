@@ -5,13 +5,13 @@ import (
 	"github.com/Webglhost-QA-Backend/backend/internal/app/controllers"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/repositories"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/services"
-	"github.com/Webglhost-QA-Backend/backend/pkg/cache"
+	"github.com/Webglhost-QA-Backend/backend/pkg/cache_client"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 )
 
-func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mongo.Client, cache *cache.Redis) {
+func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mongo.Client, cache *cache_client.Redis) {
 	nodeRepo := repositories.NewNodeRepository(db)
 	watcherRepo := repositories.NewWatcherRepository(mongo)
 	nodeService := services.NewNodeService(nodeRepo)
