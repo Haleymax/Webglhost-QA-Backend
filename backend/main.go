@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Webglhost-QA-Backend/backend/config"
 	"github.com/Webglhost-QA-Backend/backend/internal/routers"
+	"github.com/Webglhost-QA-Backend/backend/pkg/cache"
 	"github.com/Webglhost-QA-Backend/backend/pkg/database"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -27,7 +28,10 @@ func main() {
 	}
 	defer database.MongoClose()
 
-	routers.SetupRouter(router, db, cfg, mongo)
+	redisClient := new(cache.Redis)
+	redisClient.Cfg = cfg.REDIS
+
+	routers.SetupRouter(router, db, cfg, mongo, redisClient)
 
 	go func() {
 		if err := router.Run(cfg.SERVER.PORT); err != nil {

@@ -12,6 +12,7 @@ type Config struct {
 	SERVER Server       `mapstructure:"server"`
 	REMOTE RemoteConfig `mapstructure:"remote"`
 	MONGO  MongoConfig  `mapstructure:"mongo"`
+	REDIS  RedisConfig  `mapstructure:"redis"`
 }
 
 func LoadConfig() *Config {
