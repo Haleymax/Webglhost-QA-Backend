@@ -43,3 +43,12 @@ export const updateWatcher = (data: Watcher) => {
     data
   })
 }
+
+
+export const updateRedis = (data: any) => {
+  return request({
+    url: '/api/watchers/refresh',
+    method: 'post',
+    data
+  })
+}
