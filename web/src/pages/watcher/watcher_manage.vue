@@ -5,7 +5,7 @@
     >
         <template v-slot:text>
             <v-row align="center">
-                <v-col cols="8">
+                <v-col cols="6">
                     <v-text-field
                         v-model="search"
                         label="查找watcher"
@@ -30,6 +30,26 @@
                     <v-card>
                         <v-card-title>添加watcher</v-card-title>
                         <AddWatcher/>
+                    </v-card>
+                </v-dialog>
+
+                </v-col>
+
+                <v-col cols="2">
+                    <v-btn
+                        color="primary"
+                        @click="update_redis = true"
+                    >
+                    更新redis缓存
+                </v-btn>
+
+                <v-dialog
+                    v-model="update_redis"
+                    max-width="600px"
+                >
+                    <v-card>
+                        <v-card-title>更新redis缓存</v-card-title>
+                        <UpdateRedis/>
                     </v-card>
                 </v-dialog>
 
@@ -84,6 +104,7 @@ import { onMounted, ref } from 'vue'
 import { type Watcher , deleteWatcher} from '@/api/watcher'
 import AddWatcher from '@/components/watcher/add_watcher.vue'
 import UpdateWatcher from '@/components/watcher/update_watcher.vue'
+import UpdateRedis from '@/components/watcher/update_redis.vue'
 
 const headers = [
     { text: '名称', value: 'name' },
@@ -99,8 +120,9 @@ const watchers = ref<Watcher[]>([])
 
 const search = ref('')
 const dialog = ref(false)
+const update_redis = ref(false)
 const update = ref(false)
-const editWatcher = ref<Watcher | null>(null) // 新增
+const editWatcher = ref<Watcher | null>(null)
 
 onMounted(async () => {
     const res:any = await getWatchers()
