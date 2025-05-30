@@ -20,6 +20,7 @@ type WatcherRepository interface {
 	FindAll() ([]*models.Watcher, error)
 	FindOne(filter interface{}) (*models.Watcher, error)
 	FindByID(watcher *models.Watcher) (*models.Watcher, error)
+	FindByCategory(filter interface{}) ([]models.Watcher, error)
 }
 
 type WatcherRepositoryImpl struct {
@@ -137,4 +138,26 @@ func (r *WatcherRepositoryImpl) FindByID(watcher *models.Watcher) (*models.Watch
 		return nil, err
 	}
 	return watcher, nil
+}
+
+func (r *WatcherRepositoryImpl) FindByCategory(filter interface{}) ([]models.Watcher, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	var watchers []models.Watcher
+	cursor, err := r.GetCollection().Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+	for cursor.Next(ctx) {
+		var watcher models.Watcher
+		if err := cursor.Decode(&watcher); err != nil {
+			return nil, err
+		}
+		watchers = append(watchers, watcher)
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+	return watchers, nil
 }

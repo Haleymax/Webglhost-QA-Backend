@@ -192,3 +192,26 @@ func (wc *WatcherController) DeleteWatcher(c *gin.Context) {
 		"status":  true,
 	})
 }
+
+func (wc *WatcherController) RefreshCache(c *gin.Context) {
+	parameter := models.WatcherRequest{}
+	if err := c.BindJSON(&parameter); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "fail to bind data",
+			"status":  false,
+		})
+		return
+	}
+	if err := wc.WatcherService.RefreshCache(parameter.Env, parameter.Runtime); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "fail to refresh cache" + err.Error(),
+			"status":  false,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully refresh cache",
+		"status":  true,
+	})
+
+}

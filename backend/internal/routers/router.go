@@ -5,17 +5,18 @@ import (
 	"github.com/Webglhost-QA-Backend/backend/internal/app/controllers"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/repositories"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/services"
+	"github.com/Webglhost-QA-Backend/backend/pkg/cache_client"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 )
 
-func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mongo.Client) {
+func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mongo.Client, cache *cache_client.Redis) {
 	nodeRepo := repositories.NewNodeRepository(db)
 	watcherRepo := repositories.NewWatcherRepository(mongo)
 	nodeService := services.NewNodeService(nodeRepo)
 	remoteService := services.NewRemoteService(&cfg.REMOTE)
-	watcherService := services.NewWatcherService(watcherRepo)
+	watcherService := services.NewWatcherService(watcherRepo, cache)
 	nodeController := controllers.NewNodeController(nodeService, remoteService)
 	watcherController := controllers.NewWatcherController(watcherService)
 	initControler := controllers.NewInitController(db)
@@ -40,5 +41,6 @@ func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mon
 		watchers.POST("/add", watcherController.AddWatcher)
 		watchers.PUT("/update", watcherController.UpdataWatcher)
 		watchers.DELETE("/delete", watcherController.DeleteWatcher)
+		watchers.POST("/refresh", watcherController.RefreshCache)
 	}
 }

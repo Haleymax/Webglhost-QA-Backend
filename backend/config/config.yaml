@@ -18,3 +18,8 @@ server:
 remote:
   remote_dir: "/Users/u3d/jenkins/workspaces/webglhost-auto-android/app"
   adb_path: "/usr/local/platform-tools/"
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  db: 0

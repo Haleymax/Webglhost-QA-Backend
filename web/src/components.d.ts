@@ -13,6 +13,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Updata_node: typeof import('./components/node/updata_node.vue')['default']
+    Update_redis: typeof import('./components/watcher/update_redis.vue')['default']
     Update_watcher: typeof import('./components/watcher/update_watcher.vue')['default']
   }
 }
