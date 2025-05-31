@@ -274,3 +274,7 @@ func (nc *NodeController) GetADBDevices(c *gin.Context) {
 		"status":  true,
 	})
 }
+
+func (nc *NodeController) InsertPhoneToMongo(c *gin.Context) {
+
+}
