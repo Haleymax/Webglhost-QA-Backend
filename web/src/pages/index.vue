@@ -22,12 +22,12 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-item to="/updata">
+        <v-list-item to="/phone">
           <v-list-item-icon>
             <v-icon>mdi-database</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title>手机信息入库</v-list-item-title>
+            <v-list-item-title>手机管理</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>

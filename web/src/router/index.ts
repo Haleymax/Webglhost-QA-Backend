@@ -38,7 +38,13 @@ const routes = [
     path: '/watcher',
     name: 'Watcher',
     component: () => import('@/pages/watcher/watcher_manage.vue'),
+  },
+  {
+    path: '/phone',
+    name: 'Phone',
+    component: () => import('@/pages/phone/phone_manage.vue'),
   }
+
 ]
 
 const router = createRouter({
