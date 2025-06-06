@@ -13,9 +13,6 @@ func (Node) TableName() string {
 }
 
 type NodeAndPhone struct {
-	Host     string `json:"host"`
-	Name     string `json:"name"`
-	User     string `json:"user"`
-	Password string `json:"password"`
-	Serial   string `json:"serial"`
+	Host   string `json:"host"`
+	Serial string `json:"serial"`
 }

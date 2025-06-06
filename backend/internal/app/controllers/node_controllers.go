@@ -270,11 +270,43 @@ func (nc *NodeController) GetADBDevices(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully get phones",
-		"nodes":   phones,
+		"serials": phones,
 		"status":  true,
 	})
 }
 
-func (nc *NodeController) InsertPhoneToMongo(c *gin.Context) {
+func (nc *NodeController) GetPhoneInfo(c *gin.Context) {
+	var parameter models.NodeAndPhone
+	if err := c.ShouldBind(&parameter); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid request payload",
+			"info":    nil,
+			"status":  false,
+		})
+		return
+	}
+	node, err := nc.deviceService.FindNode(parameter.Host)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to find node",
+			"info":    nil,
+			"status":  false,
+		})
+		return
+	}
+
+	phone_info, err := nc.remoteService.GetPhoneInfo(*node, parameter.Serial)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to get phones info",
+			"status":  false,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully get phones info",
+		"info":    phone_info,
+		"status":  true,
+	})
 
 }

@@ -10,6 +10,7 @@ import (
 type RemoteService interface {
 	UpLoad(filePath string, node models.Node) error
 	GetPhone(node models.Node) ([]string, error)
+	GetPhoneInfo(node models.Node, serial string) (models.Phone, error)
 }
 
 type RemoteServiceImpl struct {
@@ -62,4 +63,19 @@ func (r RemoteServiceImpl) GetPhone(node models.Node) ([]string, error) {
 		return nil, err
 	}
 	return phones, nil
+}
+
+func (r RemoteServiceImpl) GetPhoneInfo(node models.Node, serial string) (models.Phone, error) {
+	remote_client := remote.NewRemoteClient(node.Host, 22, node.User, node.Password)
+	if err := remote_client.Connect(); err != nil {
+		return models.Phone{}, err
+	}
+	defer remote_client.Close()
+
+	phone_info, err := remote_client.GetPhoneInfo(r.ADBPath, serial)
+	if err != nil {
+		log.Printf("get phone info error: %v", err)
+		return models.Phone{}, err
+	}
+	return phone_info, nil
 }
