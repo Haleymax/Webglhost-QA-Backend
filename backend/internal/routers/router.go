@@ -34,6 +34,7 @@ func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mon
 		nodes.GET("/get", nodeController.GetNodes)
 		nodes.POST("/upload", nodeController.Upload)
 		nodes.GET("/get_phone", nodeController.GetADBDevices)
+		nodes.POST("/phone_info", nodeController.GetPhoneInfo)
 	}
 	watchers := api.Group("/watchers")
 	{

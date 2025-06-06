@@ -14,6 +14,11 @@ export interface updata {
     password: string
 }
 
+export interface GetPhoneInfo {
+  "host": string,
+  "serial": string,
+}
+
 export const addNode = (node: Node) => {
     return request({
         url: '/api/nodes/add',
@@ -50,5 +55,22 @@ export const uploadFile = (data: FormData) => {
         url: '/api/nodes/upload',
         method: 'post',
         data: data,
+    })
+}
+
+export const getPhoneList = (host: string) => {
+    return request({
+        url: '/api/nodes/get_phone',
+        method: 'get',
+        params: { host }
+    })
+}
+
+
+export const getPhoneInfo = (data: GetPhoneInfo) => {
+    return request({
+        url: '/api/nodes/phone_info',
+        method: 'post',
+        data: data
     })
 }

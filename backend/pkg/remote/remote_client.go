@@ -175,8 +175,8 @@ func (r RemoteClient) GetADBDevices(adb_path string) ([]string, error) {
 	return devices, nil
 }
 
-func (r RemoteClient) getDeviceProperty(serial, prop string) string {
-	cmd := fmt.Sprintf("adb -s %s shell getprop %s", serial, prop)
+func (r RemoteClient) getDeviceProperty(adb_path, serial, prop string) string {
+	cmd := fmt.Sprintf("%sadb -s %s shell getprop %s", adb_path, serial, prop)
 	result, err := r.RunCommadn(cmd)
 	if err != nil {
 		return "Unknown"
@@ -188,7 +188,7 @@ func (r RemoteClient) getDeviceProperty(serial, prop string) string {
 	return result
 }
 
-func (r RemoteClient) getDeviceMarketName(serial string) string {
+func (r RemoteClient) getDeviceMarketName(adb_path, serial string) string {
 	marketProps := []string{
 		MarketNames.OPPO,
 		MarketNames.HONOR,
@@ -200,7 +200,7 @@ func (r RemoteClient) getDeviceMarketName(serial string) string {
 	}
 
 	for _, prop := range marketProps {
-		result := r.getDeviceProperty(serial, prop)
+		result := r.getDeviceProperty(adb_path, serial, prop)
 		if result != "Unknown" && len(result) > 1 {
 			return result
 		}
@@ -213,11 +213,11 @@ func (r RemoteClient) GetPhoneInfo(adb_path, serial string) (models.Phone, error
 		return models.Phone{}, fmt.Errorf("client is not connected")
 	}
 
-	manufacturer := r.getDeviceProperty(serial, "ro.product.manufacturer")
-	model := r.getDeviceProperty(serial, "ro.product.model")
-	androidVersion := r.getDeviceProperty(serial, "ro.build.version.release")
-	cpuAbi := r.getDeviceProperty(serial, "ro.product.cpu.abi")
-	marketName := r.getDeviceMarketName(serial)
+	manufacturer := r.getDeviceProperty(adb_path, serial, "ro.product.manufacturer")
+	model := r.getDeviceProperty(adb_path, serial, "ro.product.model")
+	androidVersion := r.getDeviceProperty(adb_path, serial, "ro.build.version.release")
+	cpuAbi := r.getDeviceProperty(adb_path, serial, "ro.product.cpu.abi")
+	marketName := r.getDeviceMarketName(adb_path, serial)
 
 	phone := models.Phone{
 		Manufacturer:   manufacturer,

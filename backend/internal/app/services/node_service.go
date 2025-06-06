@@ -13,7 +13,6 @@ type NodeService interface {
 	UpdateNode(node models.Node) error
 	FindNode(host string) (*models.Node, error)
 	FindAllNodes() ([]HostMap, error)
-	GetPhoneInfo(host string) (models.Node, error)
 }
 
 type NodeServiceImpl struct {
@@ -53,12 +52,4 @@ func (s *NodeServiceImpl) FindAllNodes() ([]HostMap, error) {
 		}
 	}
 	return hostMaps, nil
-}
-
-func (s *NodeServiceImpl) GetPhoneInfo(host string) (*models.Node, error) {
-	node, err := s.deviceRepo.FindByHost(host)
-	if err != nil {
-		return nil, err
-	}
-	return node, nil
 }
