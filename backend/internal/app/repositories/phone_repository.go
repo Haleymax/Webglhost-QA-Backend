@@ -14,8 +14,9 @@ var device_collection = "devices"
 type PhoneRepository interface {
 	FindAll() ([]models.Phone, error)
 	FindOne(serial string) (models.Phone, error)
-	InsertOne(phone *models.Phone) error
+	InsertOne(phone models.Phone) error
 	Update(phone *models.Phone) error
+	Delete(phone models.Phone) error
 }
 
 type PhoneRepositoryImpl struct {
@@ -32,10 +33,9 @@ func (r *PhoneRepositoryImpl) GetCollection() *mongo.Collection {
 	return r.mongo.Database(db_name).Collection(device_collection)
 }
 
-func (r *PhoneRepositoryImpl) InsertOne(phone *models.Phone) error {
+func (r *PhoneRepositoryImpl) InsertOne(phone models.Phone) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-
 	_, err := r.GetCollection().InsertOne(ctx, phone)
 	return err
 }
@@ -47,7 +47,7 @@ func (r *PhoneRepositoryImpl) Update(phone *models.Phone) error {
 	objID, _ := primitive.ObjectIDFromHex(phone.ID)
 	filter := bson.M{"_id": objID}
 
-	newData := map[string]string{
+	newData := map[string]interface{}{
 		"androidVersion":   phone.AndroidVersion,
 		"marketName":       phone.MarketName,
 		"marketNameSymbol": phone.MarketNameSymbol,
@@ -89,13 +89,18 @@ func (r *PhoneRepositoryImpl) FindOne(serial string) (models.Phone, error) {
 
 	var phone models.Phone
 	filter := bson.M{"serial": serial}
-	cursor, err := r.GetCollection().Find(ctx, filter)
+	err := r.GetCollection().FindOne(ctx, filter).Decode(&phone)
 	if err != nil {
 		return models.Phone{}, err
 	}
-	defer cursor.Close(ctx)
-	if err := cursor.Decode(&phone); err != nil {
-		return models.Phone{}, err
-	}
 	return phone, nil
+}
+
+func (r *PhoneRepositoryImpl) Delete(phone models.Phone) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	objID, _ := primitive.ObjectIDFromHex(phone.ID)
+	filter := bson.M{"_id": objID}
+	_, err := r.GetCollection().DeleteOne(ctx, filter)
+	return err
 }
