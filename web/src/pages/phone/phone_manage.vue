@@ -36,11 +36,9 @@
                 </v-col>
             </v-row>
         </template>
-
         <v-data-table
             :headers="headers"
             :items="phoneList"
-            :search="search"
         >
             <template v-slot:item.action="{ item }">
                 <v-btn
@@ -49,7 +47,6 @@
                 >
                     <v-icon>mdi-delete</v-icon>
                 </v-btn>
-
                 <v-btn
                     icon
                     @click="openEditDialog(item)"
@@ -62,25 +59,40 @@
 </template>
 
 <script setup lang="ts" name="PhoneManage">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import AddPhone from '@/components/phone/add_phone.vue';
+import { getAllPhoneInfo } from '@/api/phone';
+import { processPhoneInfo } from '@/utils/processing_phone_info';
 
 const search = ref('');
 const addphone = ref(false);
 
 
 const headers = [
-    { text: '手机ID', value: 'id' },
-    { text: '手机名称', value: 'name' },
-    { text: '手机状态', value: 'status' },
+    { text: '序列号', value: 'serial' },
+    { text: '生产厂商', value: 'manufacturer' },
+    { text: '型号', value: 'model' },
+    { text: '安卓版本', value: 'androidVersion'},
+    { text: 'CPU架构', value: 'cpuabi' },
+    { text: '市场名称', value: 'marketName' },
+    { text: '市场名称符号', value: 'marketNameSymbol' },
     { text: '操作', value: 'action', sortable: false }
 ];
 
-const phoneList = ref([
-    { id: 1, name: '手机A', status: '在线' },
-    { id: 2, name: '手机B', status: '离线' },
-    { id: 3, name: '手机C', status: '在线' }
-]);
+const phoneList = ref([]);
 
+onMounted(async () => {
+    const res:any = await getAllPhoneInfo();
+    let data = [];
+    if (res.status) {
+        data = res.phones;
+        data = processPhoneInfo(data);
+        // 如果 data 是 Map 数组，转成对象数组
+        if (data.length && data[0] instanceof Map) {
+            data = data.map(m => Object.fromEntries(m));
+        }
+        phoneList.value = data;
+    }
+});
 
 </script>
