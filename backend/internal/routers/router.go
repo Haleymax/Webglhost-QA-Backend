@@ -14,11 +14,17 @@ import (
 func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mongo.Client, cache *cache_client.Redis) {
 	nodeRepo := repositories.NewNodeRepository(db)
 	watcherRepo := repositories.NewWatcherRepository(mongo)
+	phoneRepo := repositories.NewPhoneRepository(mongo)
+
 	nodeService := services.NewNodeService(nodeRepo)
 	remoteService := services.NewRemoteService(&cfg.REMOTE)
 	watcherService := services.NewWatcherService(watcherRepo, cache)
+	phoneService := services.NewPhoneService(phoneRepo)
+
 	nodeController := controllers.NewNodeController(nodeService, remoteService)
 	watcherController := controllers.NewWatcherController(watcherService)
+	phoneController := controllers.NewPhoneController(phoneService)
+
 	initControler := controllers.NewInitController(db)
 
 	api := router.Group("/api/v1")
@@ -43,5 +49,10 @@ func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mon
 		watchers.PUT("/update", watcherController.UpdataWatcher)
 		watchers.DELETE("/delete", watcherController.DeleteWatcher)
 		watchers.POST("/refresh", watcherController.RefreshCache)
+	}
+
+	phone := api.Group("/phone")
+	{
+		phone.GET("/find", phoneController.FindAllPhone)
 	}
 }

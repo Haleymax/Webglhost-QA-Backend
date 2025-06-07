@@ -10,16 +10,16 @@ type PhoneInfoMap map[string]string
 type PhoneService interface {
 	AddPhone(phone *models.Phone) error
 	UpdatePhone(phone *models.Phone) error
-	FindAllPhone() ([]models.Phone, error)
-	FindOnePhone(serial string) (*models.Phone, error)
+	FindAllPhone() ([]PhoneInfoMap, error)
+	FindOnePhone(serial string) (models.Phone, error)
 }
 
 type PhoneServiceImpl struct {
 	phoneRepo repositories.PhoneRepository
 }
 
-func NewPhoneService(repo repositories.PhoneRepository) *PhoneServiceImpl {
-	return &PhoneServiceImpl{
+func NewPhoneService(repo repositories.PhoneRepository) PhoneServiceImpl {
+	return PhoneServiceImpl{
 		phoneRepo: repo,
 	}
 }
