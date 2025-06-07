@@ -54,5 +54,6 @@ func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mon
 	phone := api.Group("/phone")
 	{
 		phone.GET("/find", phoneController.FindAllPhone)
+		phone.DELETE("/remove", phoneController.DeletePhone)
 	}
 }

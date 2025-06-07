@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/Webglhost-QA-Backend/backend/internal/app/models"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/repositories"
+	"log"
 )
 
 type PhoneInfoMap map[string]string
@@ -12,6 +13,7 @@ type PhoneService interface {
 	UpdatePhone(phone *models.Phone) error
 	FindAllPhone() ([]PhoneInfoMap, error)
 	FindOnePhone(serial string) (models.Phone, error)
+	DeletePhone(serial string) error
 }
 
 type PhoneServiceImpl struct {
@@ -35,6 +37,19 @@ func (p PhoneServiceImpl) UpdatePhone(phone *models.Phone) error {
 func (p PhoneServiceImpl) FindOnePhone(serial string) (models.Phone, error) {
 	phone, err := p.phoneRepo.FindOne(serial)
 	return phone, err
+}
+
+func (p PhoneServiceImpl) DeletePhone(serial string) error {
+	phone, err := p.phoneRepo.FindOne(serial)
+	if err != nil {
+		log.Printf("delete phone err: %v", err)
+		return err
+	}
+	if err = p.phoneRepo.Delete(phone); err != nil {
+		log.Printf("delete phone err: %v", err)
+		return err
+	}
+	return nil
 }
 
 func (p PhoneServiceImpl) FindAllPhone() ([]PhoneInfoMap, error) {

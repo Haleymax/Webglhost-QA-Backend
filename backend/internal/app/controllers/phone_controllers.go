@@ -18,7 +18,7 @@ func NewPhoneController(phoneService services.PhoneService) PhoneController {
 }
 
 func (pc *PhoneController) AddPhone(c *gin.Context) {
-	
+
 }
 
 func (pc *PhoneController) FindAllPhone(c *gin.Context) {
@@ -36,6 +36,22 @@ func (pc *PhoneController) FindAllPhone(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successfully get all phones",
 		"phones":  phones,
+		"status":  true,
+	})
+}
+
+func (pc *PhoneController) DeletePhone(c *gin.Context) {
+	serial := c.Query("serial")
+	if err := pc.PhoneService.DeletePhone(serial); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+			"status":  false,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully delete phones",
 		"status":  true,
 	})
 }
