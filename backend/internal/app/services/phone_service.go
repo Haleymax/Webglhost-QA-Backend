@@ -1,15 +1,18 @@
 package services
 
 import (
+	"errors"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/models"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/repositories"
+	"go.mongodb.org/mongo-driver/mongo"
 	"log"
+	"time"
 )
 
 type PhoneInfoMap map[string]string
 
 type PhoneService interface {
-	AddPhone(phone *models.Phone) error
+	AddPhone(phone models.Phone) (bool, string)
 	UpdatePhone(phone *models.Phone) error
 	FindAllPhone() ([]PhoneInfoMap, error)
 	FindOnePhone(serial string) (models.Phone, error)
@@ -26,11 +29,34 @@ func NewPhoneService(repo repositories.PhoneRepository) PhoneServiceImpl {
 	}
 }
 
-func (p PhoneServiceImpl) AddPhone(phone *models.Phone) error {
-	return p.phoneRepo.InsertOne(phone)
+func (p PhoneServiceImpl) AddPhone(phone models.Phone) (bool, string) {
+	exis, err := p.FindOnePhone(phone.Serial)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			log.Println("phone not exists")
+		} else {
+			log.Println(err)
+			return false, err.Error()
+		}
+	}
+
+	var empty models.Phone
+	if exis != empty {
+		return false, "phone is exist"
+	}
+
+	phone.CreateTime = time.Now()
+	phone.UpdateTime = time.Now()
+	err = p.phoneRepo.InsertOne(phone)
+	if err != nil {
+		log.Println(err)
+		return false, err.Error()
+	}
+	return true, "success add phone"
 }
 
 func (p PhoneServiceImpl) UpdatePhone(phone *models.Phone) error {
+	phone.UpdateTime = time.Now()
 	return p.phoneRepo.Update(phone)
 }
 
@@ -60,6 +86,7 @@ func (p PhoneServiceImpl) FindAllPhone() ([]PhoneInfoMap, error) {
 	phoneMaps := make([]PhoneInfoMap, len(phones))
 	for i, phone := range phones {
 		phoneMaps[i] = PhoneInfoMap{
+			"id":               phone.ID,
 			"serial":           phone.Serial,
 			"manufacturer":     phone.Manufacturer,
 			"model":            phone.Model,
