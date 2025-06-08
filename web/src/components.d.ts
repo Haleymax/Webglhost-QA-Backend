@@ -13,7 +13,9 @@ declare module 'vue' {
     Add_watcher: typeof import('./components/watcher/add_watcher.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Updata_node: typeof import('./components/node/updata_node.vue')['default']
+    Updata_node: typeof import('./components/node/update_node.vue')['default']
+    Update_node: typeof import('./components/node/update_node.vue')['default']
+    Update_phone: typeof import('./components/phone/update_phone.vue')['default']
     Update_redis: typeof import('./components/watcher/update_redis.vue')['default']
     Update_watcher: typeof import('./components/watcher/update_watcher.vue')['default']
   }

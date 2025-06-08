@@ -71,7 +71,7 @@
 
 <script setup lang="ts" name="DeviceManage">
 import AddNode from '@/components/node/add_node.vue'
-import UpdataNode from '@/components/node/updata_node.vue'
+import UpdataNode from '@/components/node/update_node.vue'
 import { h, onMounted, ref } from 'vue'
 import { type nodesResponse} from '@/api/response_data'
 import { getNodes } from '@/api/device'
