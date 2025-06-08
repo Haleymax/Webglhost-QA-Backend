@@ -28,7 +28,7 @@ export const getAllPhoneInfo = () => {
 
 export const updataPhone = (phone: Phone) => {
     return request({
-        url: '/api/phone/updata',
+        url: '/api/phone/update',
         method: 'put',
         data: phone
     });

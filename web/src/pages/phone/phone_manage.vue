@@ -55,17 +55,29 @@
                 </v-btn>
             </template>
         </v-data-table>
+        <v-dialog
+            v-model="update"
+            max-width="600px"
+        >
+            <v-card>
+                <v-card-title>编辑手机信息</v-card-title>
+                <UpdatePhone v-if="editPhone" :PhoneData="editPhone"/>
+            </v-card>
+        </v-dialog>
     </v-card>
 </template>
 
 <script setup lang="ts" name="PhoneManage">
 import { onMounted, ref } from 'vue';
 import AddPhone from '@/components/phone/add_phone.vue';
-import { getAllPhoneInfo } from '@/api/phone';
+import { getAllPhoneInfo, type Phone } from '@/api/phone';
 import { processPhoneInfo } from '@/utils/processing_phone_info';
+import UpdatePhone from '@/components/phone/update_phone.vue';
 
 const search = ref('');
 const addphone = ref(false);
+const editPhone = ref<Phone | null>(null);
+const update = ref(false);
 
 
 const headers = [
@@ -94,5 +106,10 @@ onMounted(async () => {
         phoneList.value = data;
     }
 });
+
+const openEditDialog = (item: Phone) => {
+    editPhone.value = item;
+    update.value = true;
+};
 
 </script>
