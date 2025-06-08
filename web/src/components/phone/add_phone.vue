@@ -91,11 +91,13 @@
 </template>
 
 <script setup lang="ts" name="AddPhone">
-import { onMounted, ref, watch} from 'vue';
-import { type nodesResponse} from '@/api/response_data'
-import { getNodes, getPhoneInfo, getPhoneList} from '@/api/device'
+import { onMounted, ref, watch } from 'vue';
+import { type nodesResponse } from '@/api/response_data'
+import { getNodes, getPhoneInfo, getPhoneList } from '@/api/device'
 import { type GetPhoneInfo } from '@/api/device'
-import { da } from 'vuetify/locale';
+import type { Phone } from '@/api/phone';
+import { addPhone } from '@/api/phone';
+import { el } from 'vuetify/locale';
 
 const PhoneList = ref([])
 const nodes = ref([])
@@ -195,7 +197,20 @@ const handFindPhoneInfo = async () => {
 }
 
 const handAddPhone = async () => {
-    // 实现添加手机的逻辑
-    // 校验字段并调用添加接口
+    const data:Phone = {
+        serial: addSerial.value,
+        manufacturer: manufacturer.value,
+        model: model.value,
+        androidVersion: androidVersion.value,
+        cpuabi: cpuabi.value,
+        marketName: marketName.value,
+        marketNameSymbol: marketNameSymbol.value
+    };
+    const res:any = await addPhone(data);
+    if (res.status) {
+        alert('添加手机成功: ' + res.message);
+    }else {
+        alert('添加手机失败: ' + res.message);
+    }
 }
 </script>
