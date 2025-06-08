@@ -34,6 +34,15 @@
                         </v-card>
                     </v-dialog>
                 </v-col>
+                <v-col cols="2">
+                    <v-btn
+                        width="20px"
+                        color="primary"
+                        @click="refreshPhoneList"
+                    >
+                        刷新
+                    </v-btn>
+                </v-col>
             </v-row>
         </template>
         <v-data-table
@@ -70,7 +79,7 @@
 <script setup lang="ts" name="PhoneManage">
 import { onMounted, ref } from 'vue';
 import AddPhone from '@/components/phone/add_phone.vue';
-import { getAllPhoneInfo, type Phone } from '@/api/phone';
+import { deletePhone, getAllPhoneInfo, type Phone } from '@/api/phone';
 import { processPhoneInfo } from '@/utils/processing_phone_info';
 import UpdatePhone from '@/components/phone/update_phone.vue';
 
@@ -112,4 +121,29 @@ const openEditDialog = (item: Phone) => {
     update.value = true;
 };
 
+const handleDelete = async (item: Phone) => {
+    if (confirm(`确定删除手机信息: ${item.serial} 吗？`)) {
+        const res:any = await deletePhone(item.serial);
+        if (res.status) {
+            alert('删除成功: ' + res.message);
+            refreshPhoneList();
+        } else {
+            alert('删除失败: ' + res.message);
+        }
+    }
+};
+
+const refreshPhoneList = async () => {
+    const res:any = await getAllPhoneInfo();
+    let data = [];
+    if (res.status) {
+        data = res.phones;
+        data = processPhoneInfo(data);
+        // 如果 data 是 Map 数组，转成对象数组
+        if (data.length && data[0] instanceof Map) {
+            data = data.map(m => Object.fromEntries(m));
+        }
+        phoneList.value = data;
+    }
+};
 </script>

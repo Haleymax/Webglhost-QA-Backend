@@ -34,10 +34,9 @@ export const updataPhone = (phone: Phone) => {
     });
 }
 
-export const deletePhone = (id: string) => {    
+export const deletePhone = (serial: string) => {    
     return request({
-        url: '/api/phone/remove',
+        url: '/api/phone/remove'+`?serial=${serial}`,
         method: 'delete',
-        data: id
     });
 }
