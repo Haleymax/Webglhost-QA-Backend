@@ -1,6 +1,6 @@
 mysql:
   host: "localhost"
-  port: "3308"
+  port: "3306"
   user: "root"
   password: "root"
   dbname: "qa"
@@ -9,7 +9,7 @@ mongo:
   host: "110.41.2.77"
   port: 27017
   user: "admin"
-  password: "admin"
+  pwd: "admin"
 
 server:
   host: "localhost"
