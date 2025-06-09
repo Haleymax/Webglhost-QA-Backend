@@ -18,7 +18,7 @@ type GamesRepository interface {
 	Update(game models.Game) error
 	FindAll(filter bson.M) ([]models.Game, error)
 	FindById(id string) (models.Game, error)
-	FindByName(name string) (models.Game, error)
+	FindByName(filter bson.M) (models.Game, error)
 }
 
 type GamesRepositoryImpl struct {
@@ -128,12 +128,11 @@ func (r *GamesRepositoryImpl) FindById(id string) (models.Game, error) {
 	return game, nil
 }
 
-func (r *GamesRepositoryImpl) FindByName(name string) (models.Game, error) {
+func (r *GamesRepositoryImpl) FindByName(filter bson.M) (models.Game, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	var game models.Game
-	filter := bson.M{"name": game}
 	cursor, err := r.GetCollection().Find(ctx, filter)
 	if err != nil {
 		return models.Game{}, err

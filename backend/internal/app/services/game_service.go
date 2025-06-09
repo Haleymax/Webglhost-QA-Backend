@@ -5,6 +5,7 @@ import (
 	"github.com/Webglhost-QA-Backend/backend/internal/app/models"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/repositories"
 	"go.mongodb.org/mongo-driver/bson"
+	"log"
 	"reflect"
 )
 
@@ -29,12 +30,22 @@ func NewGameService(gameRepo repositories.GamesRepository) *GameServiceImpl {
 }
 
 func (gs *GameServiceImpl) AddGame(game models.Game) error {
+	filter := bson.M{
+		"game_name": game.GameName,
+		"game_type": game.GameType,
+		"case_type": game.CaseType,
+	}
+	exists, _ := gs.gameRepo.FindByName(filter)
+	log.Println(reflect.DeepEqual(exists, models.Game{}))
+	if !reflect.DeepEqual(exists, models.Game{}) {
+		return errors.New("game not exist")
+	}
 	return gs.gameRepo.Insert(game)
 }
 
 func (gs *GameServiceImpl) DeleteGame(game models.Game) error {
 	exists, _ := gs.FindGameById(game.ID)
-	if reflect.DeepEqual(exists, models.Game{}) {
+	if !reflect.DeepEqual(exists, models.Game{}) {
 		return errors.New("game not exist")
 	}
 	return gs.gameRepo.Delete(game)
@@ -42,7 +53,7 @@ func (gs *GameServiceImpl) DeleteGame(game models.Game) error {
 
 func (gs *GameServiceImpl) UpdateGame(game models.Game) error {
 	exists, _ := gs.FindGameById(game.ID)
-	if reflect.DeepEqual(exists, models.Game{}) {
+	if !reflect.DeepEqual(exists, models.Game{}) {
 		return errors.New("game not exist")
 	}
 	return gs.gameRepo.Update(game)
