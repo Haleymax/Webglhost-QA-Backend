@@ -41,6 +41,10 @@ func (gs *GameServiceImpl) DeleteGame(game models.Game) error {
 }
 
 func (gs *GameServiceImpl) UpdateGame(game models.Game) error {
+	exists, _ := gs.FindGameById(game.ID)
+	if reflect.DeepEqual(exists, models.Game{}) {
+		return errors.New("game not exist")
+	}
 	return gs.gameRepo.Update(game)
 }
 
@@ -60,7 +64,12 @@ func (gs *GameServiceImpl) FindAllRPK() ([]models.Game, error) {
 }
 
 func (gs *GameServiceImpl) FindAllByType(request models.GameRequest) ([]models.Game, error) {
-	filter := bson.M{"game_type": request.GameType, "case_type": request.CaseType}
+	filter := bson.M{}
+	if request.GameName == "" {
+		filter = bson.M{"game_type": request.GameType, "case_type": request.CaseType}
+	} else {
+		filter = bson.M{"game_type": request.GameType, "case_type": request.CaseType, "game_name": request.GameName}
+	}
 	return gs.gameRepo.FindAll(filter)
 }
 

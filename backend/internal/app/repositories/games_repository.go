@@ -19,8 +19,6 @@ type GamesRepository interface {
 	FindAll(filter bson.M) ([]models.Game, error)
 	FindById(id string) (models.Game, error)
 	FindByName(name string) (models.Game, error)
-	FindAllWXGames() ([]models.Game, error)
-	FindAllRPK() ([]models.Game, error)
 }
 
 type GamesRepositoryImpl struct {

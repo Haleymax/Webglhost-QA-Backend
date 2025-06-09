@@ -12,3 +12,9 @@ type Game struct {
 	GameId     int      `json:"game_id" bson:"game_id"`
 	Status     bool     `json:"status" bson:"status"`
 }
+
+type GameRequest struct {
+	GameType string `json:"game_type" bson:"game_type"`
+	CaseType string `json:"case_type" bson:"case_type"`
+	GameName string `json:"game_name" bson:"game_name"`
+}
