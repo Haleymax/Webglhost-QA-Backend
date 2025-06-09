@@ -68,7 +68,8 @@ func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mon
 		game.GET("/find_wx", gameController.FindAllWXGame)
 		game.GET("/find_rpk", gameController.FindAllRPK)
 		game.POST("/find_by_type", gameController.FindAllGameByType)
-		game.POST("/update", gameController.UpdateGameInfo)
+		game.PUT("/update", gameController.UpdateGameInfo)
 		game.POST("/add", gameController.AddGame)
+		game.DELETE("/remove", gameController.DeleteGame)
 	}
 }

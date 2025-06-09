@@ -155,3 +155,27 @@ func (gc *GameController) AddGame(c *gin.Context) {
 		"status":  true,
 	})
 }
+
+func (gc *GameController) DeleteGame(c *gin.Context) {
+	var GameInfo models.Game
+	if err := c.ShouldBind(&GameInfo); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+			"status":  false,
+		})
+		return
+	}
+	if err2 := gc.GameService.DeleteGame(GameInfo); err2 != nil {
+		log.Printf("Faild to delete game:%v", err2)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err2.Error(),
+			"status":  false,
+		})
+		return
+	}
+	log.Println("Successful delete game info")
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successful delete game info",
+		"status":  true,
+	})
+}

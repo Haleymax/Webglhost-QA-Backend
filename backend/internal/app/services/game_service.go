@@ -38,14 +38,14 @@ func (gs *GameServiceImpl) AddGame(game models.Game) error {
 	exists, _ := gs.gameRepo.FindByName(filter)
 	log.Println(reflect.DeepEqual(exists, models.Game{}))
 	if !reflect.DeepEqual(exists, models.Game{}) {
-		return errors.New("game not exist")
+		return errors.New("game exist")
 	}
 	return gs.gameRepo.Insert(game)
 }
 
 func (gs *GameServiceImpl) DeleteGame(game models.Game) error {
 	exists, _ := gs.FindGameById(game.ID)
-	if !reflect.DeepEqual(exists, models.Game{}) {
+	if reflect.DeepEqual(exists, models.Game{}) {
 		return errors.New("game not exist")
 	}
 	return gs.gameRepo.Delete(game)
@@ -53,7 +53,9 @@ func (gs *GameServiceImpl) DeleteGame(game models.Game) error {
 
 func (gs *GameServiceImpl) UpdateGame(game models.Game) error {
 	exists, _ := gs.FindGameById(game.ID)
-	if !reflect.DeepEqual(exists, models.Game{}) {
+	log.Println(exists)
+	log.Println(reflect.DeepEqual(exists, models.Game{}))
+	if reflect.DeepEqual(exists, models.Game{}) {
 		return errors.New("game not exist")
 	}
 	return gs.gameRepo.Update(game)
