@@ -25,7 +25,7 @@ func NewGameService(gameRepo repositories.GamesRepository) *GameServiceImpl {
 }
 
 func (gs *GameServiceImpl) AddGame(game models.Game) error {
-	return gs.AddGame(game)
+	return gs.gameRepo.Insert(game)
 }
 
 func (gs *GameServiceImpl) DeleteGame(game models.Game) error {
@@ -33,19 +33,19 @@ func (gs *GameServiceImpl) DeleteGame(game models.Game) error {
 	if reflect.DeepEqual(exists, models.Game{}) {
 		return errors.New("game not exist")
 	}
-	return gs.DeleteGame(game)
+	return gs.gameRepo.Delete(game)
 }
 
 func (gs *GameServiceImpl) UpdateGame(game models.Game) error {
-	return gs.UpdateGame(game)
+	return gs.gameRepo.Update(game)
 }
 
 func (gs *GameServiceImpl) FindAllGame() ([]models.Game, error) {
-	return gs.FindAllGame()
+	return gs.gameRepo.FindAll()
 }
 
 func (gs *GameServiceImpl) FindGameById(gameId string) (models.Game, error) {
-	return gs.FindGameById(gameId)
+	return gs.gameRepo.FindById(gameId)
 }
 
 func (gs *GameServiceImpl) FindGameByName(name string) (models.Game, error) {
