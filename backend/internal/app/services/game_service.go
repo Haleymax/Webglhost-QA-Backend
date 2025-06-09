@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/models"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/repositories"
+	"go.mongodb.org/mongo-driver/bson"
 	"reflect"
 )
 
@@ -14,6 +15,9 @@ type GameService interface {
 	FindAllGame() ([]models.Game, error)
 	FindGameById(gameId string) (models.Game, error)
 	FindGameByName(name string) (models.Game, error)
+	FindAllWxGame() ([]models.Game, error)
+	FindAllRPK() ([]models.Game, error)
+	FindAllByType(request models.GameRequest) ([]models.Game, error)
 }
 
 type GameServiceImpl struct {
@@ -41,7 +45,23 @@ func (gs *GameServiceImpl) UpdateGame(game models.Game) error {
 }
 
 func (gs *GameServiceImpl) FindAllGame() ([]models.Game, error) {
-	return gs.gameRepo.FindAll()
+	filter := bson.M{}
+	return gs.gameRepo.FindAll(filter)
+}
+
+func (gs *GameServiceImpl) FindAllWxGame() ([]models.Game, error) {
+	filter := bson.M{"game_type": "weixin_minigame"}
+	return gs.gameRepo.FindAll(filter)
+}
+
+func (gs *GameServiceImpl) FindAllRPK() ([]models.Game, error) {
+	filter := bson.M{"game_type": "quick_minigame"}
+	return gs.gameRepo.FindAll(filter)
+}
+
+func (gs *GameServiceImpl) FindAllByType(request models.GameRequest) ([]models.Game, error) {
+	filter := bson.M{"game_type": request.GameType, "case_type": request.CaseType}
+	return gs.gameRepo.FindAll(filter)
 }
 
 func (gs *GameServiceImpl) FindGameById(gameId string) (models.Game, error) {

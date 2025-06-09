@@ -16,9 +16,11 @@ type GamesRepository interface {
 	Insert(game models.Game) error
 	Delete(game models.Game) error
 	Update(game models.Game) error
-	FindAll() ([]models.Game, error)
+	FindAll(filter bson.M) ([]models.Game, error)
 	FindById(id string) (models.Game, error)
 	FindByName(name string) (models.Game, error)
+	FindAllWXGames() ([]models.Game, error)
+	FindAllRPK() ([]models.Game, error)
 }
 
 type GamesRepositoryImpl struct {
@@ -80,12 +82,12 @@ func (r *GamesRepositoryImpl) Update(game models.Game) error {
 	return err
 }
 
-func (r *GamesRepositoryImpl) FindAll() ([]models.Game, error) {
+func (r *GamesRepositoryImpl) FindAll(filter bson.M) ([]models.Game, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	var games []models.Game
-	cursor, err := r.GetCollection().Find(ctx, bson.M{})
+	cursor, err := r.GetCollection().Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
