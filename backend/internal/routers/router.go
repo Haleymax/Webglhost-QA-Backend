@@ -71,5 +71,6 @@ func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mon
 		game.PUT("/update", gameController.UpdateGameInfo)
 		game.POST("/add", gameController.AddGame)
 		game.DELETE("/remove", gameController.DeleteGame)
+		game.GET("/ws", gameController.WebSocket)
 	}
 }

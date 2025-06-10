@@ -4,8 +4,10 @@ import (
 	"github.com/Webglhost-QA-Backend/backend/internal/app/models"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/services"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"time"
 )
 
 type GameController struct {
@@ -178,4 +180,41 @@ func (gc *GameController) DeleteGame(c *gin.Context) {
 		"message": "Successful delete game info",
 		"status":  true,
 	})
+}
+
+func (gc *GameController) WebSocket(c *gin.Context) {
+	wsUpgrader := websocket.Upgrader{
+		HandshakeTimeout: 10 * time.Second,
+		ReadBufferSize:   1024,
+		WriteBufferSize:  1024,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+
+	ws, err := wsUpgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer ws.Close()
+
+	for {
+		messageType, message, err := ws.ReadMessage()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		switch messageType {
+		case websocket.TextMessage:
+			log.Printf("处理文本信息:%s\n", string(message))
+			ws.WriteMessage(websocket.TextMessage, message)
+		case websocket.CloseMessage:
+			log.Println("关闭websocket")
+			return
+		default:
+			log.Println("未知消息")
+			return
+		}
+	}
 }

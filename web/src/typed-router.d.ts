@@ -25,6 +25,7 @@ declare module 'vue-router/auto-routes' {
     '/game/database': RouteRecordInfo<'/game/database', '/game/database', Record<never, never>, Record<never, never>>,
     '/game/game_manage': RouteRecordInfo<'/game/game_manage', '/game/game_manage', Record<never, never>, Record<never, never>>,
     '/game/quick_game': RouteRecordInfo<'/game/quick_game', '/game/quick_game', Record<never, never>, Record<never, never>>,
+    '/game/websocket': RouteRecordInfo<'/game/websocket', '/game/websocket', Record<never, never>, Record<never, never>>,
     '/game/wxmini_game': RouteRecordInfo<'/game/wxmini_game', '/game/wxmini_game', Record<never, never>, Record<never, never>>,
     '/home/home': RouteRecordInfo<'/home/home', '/home/home', Record<never, never>, Record<never, never>>,
     '/phone/phone_manage': RouteRecordInfo<'/phone/phone_manage', '/phone/phone_manage', Record<never, never>, Record<never, never>>,
