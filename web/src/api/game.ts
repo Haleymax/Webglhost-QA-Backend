@@ -27,6 +27,13 @@ export const findAllWxGame = () => {
   });
 }
 
+export const findRpkGame = () => {
+  return request({
+    url: '/api/game/find_rpk',
+    method: 'get'
+  })
+}
+
 export const searchGame = (data: SearchGame) => {
   return request({
     url: '/api/game/find_by_type',

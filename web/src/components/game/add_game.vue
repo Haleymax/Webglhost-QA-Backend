@@ -77,7 +77,7 @@ const gameUrl = ref('')
 const gameName = ref('')
 const gameId = ref('')
 
-const caseTypeItems = ['daily', 'build_target', 'converter', 'first_round', 'second_round']
+const caseTypeItems = ['daily', 'build_target', 'converter', 'first_round', 'second_round', "default"]
 
 const packageRules = [(v: string) => !!v || '包名不能为空']
 const typeRules = [(v: string) => !!v || '类型不能为空']
@@ -109,7 +109,6 @@ const handleAddGame = async () => {
   const res: any = await addGame(data)
   if (res.status) {
     alert('添加游戏成功: ' + res.message)
-    // 清空表单
     packageName.value = ''
     type.value = ''
     caseType.value = ''

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-4" outlined>    
+  <v-card class="pa-4" outlined>
     <v-tabs
       v-model="tab"
       bg-color="teal-darken-3"
@@ -18,7 +18,7 @@
         </v-tabs-window-item>
 
         <v-tabs-window-item value="two">
-            <WxMiniGame/>
+            <QuickMiniGame/>
         </v-tabs-window-item>
 
         <v-tabs-window-item value="three">
@@ -32,6 +32,7 @@
 <script setup lang="ts" name="GameManage">
 import { ref } from 'vue';
 import WxMiniGame from '@/pages/game/wxmini_game.vue';
+import QuickMiniGame from '@/pages/game/quick_game.vue'
 import DatabasePage from '@/pages/game/database.vue';
 
 const tab = ref('one');
