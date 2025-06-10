@@ -3,7 +3,7 @@ import request from "@/utils/request";
 
 export interface Game {
   id: String;
-  packahe: String;
+  package: String;
   type: String;
   case_type: String[];
   game_engine: String;
@@ -33,4 +33,20 @@ export const searchGame = (data: SearchGame) => {
     method: 'post',
     data: data
 });
+}
+
+export const addGame = (data: Game) => {
+  return request({
+    url: '/api/game/add',
+    method: 'post',
+    data: data
+  });
+}
+
+export const updateGame = (data: Game) => {
+  return request({
+    url: '/api/game/update',
+    method: 'put',
+    data: data
+  });
 }

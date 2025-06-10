@@ -37,11 +37,20 @@
                     <v-btn
                         color="success"
                         class="mx-1"
-                        @click="() => console.log('添加游戏')"
+                        @click="addgame = true"
                         variant="elevated"
                     >
                         添加游戏
                     </v-btn>
+                    <v-dialog
+                        v-model="addgame"
+                        max-width="600px"
+                    >
+                        <v-card>
+                            <v-card-title>添加微信小游戏</v-card-title>
+                            <AddGame />
+                        </v-card>
+                        </v-dialog>
                     <v-btn
                         color="info"
                         class="mx-1"
@@ -66,23 +75,36 @@
                 </v-btn>
                 <v-btn
                     icon
-                    @click="() => console.log(item.name)"
+                    @click="onEditGame(item)"
                 >
                     <v-icon>mdi-pencil</v-icon>
                 </v-btn>
             </template>
         </v-data-table>
+        <v-dialog
+            v-model="updategame"
+            max-width="600px">
+            <v-card>
+                <v-card-title>编辑微信小游戏</v-card-title>
+                <UpdateGame v-if="editGame":gameData="editGame" />
+            </v-card>
+        </v-dialog>
     </v-card>
 </template>
 
 <script setup lang="ts" name="WxMiniGame">
 import { ref, onMounted } from 'vue';
-import { findAllWxGame, searchGame, type SearchGame } from '@/api/game';
+import { findAllWxGame, searchGame, type SearchGame, type Game } from '@/api/game';
+import AddGame from '@/components/game/add_game.vue';
+import UpdateGame from '@/components/game/update_game.vue';
 
 const searchName = ref('');
-const case_type = ref('daily'); // 保持和 v-select 默认一致
+const case_type = ref('daily');
 const games = ref([]);
-const loading = ref(false); // 新增 loading 状态
+const loading = ref(false);
+const addgame = ref(false);
+const updategame = ref(false);
+const editGame = ref<Game | null>(null);
 
 const headers = ref([
     { text: 'package', value: 'package'},
@@ -141,5 +163,10 @@ const handleSearch = async() => {
     } finally {
         loading.value = false;
     }
+};
+
+const onEditGame = (item: Game) => {
+    editGame.value = item;
+    updategame.value = true;
 };
 </script>
