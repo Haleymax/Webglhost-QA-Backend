@@ -4,60 +4,142 @@
         flat
     >
         <template v-slot:text>
-            <v-row align="center">
-                <v-col cols="3">
+            <v-row align="center" class="mb-4" no-gutters>
+                <v-col cols="3" class="pr-2">
                     <v-text-field
-                        v-model="search"
+                        v-model="searchName"
                         label="游戏名称"
                         prepend-inner-icon="mdi-magnify"
                         variant="outlined"
                         hide-details
+                        dense
                     ></v-text-field>
                 </v-col>
-                <v-col cols="3">
+                <v-col cols="2" class="pr-2">
                     <v-select
-                        v-model="gameType"
-                        :items="['全部', '单机游戏', '网络游戏']"
-                        label="case_type"
-                        variant="outlined"
-                        hide-details
-                    ></v-select>
-                </v-col>
-                <v-col cols="3">
-                    <v-select
-                        v-model="gameRound"
-                        :items="['第一轮', '第二轮', '第三轮']"
+                        v-model="case_type"
+                        :items="['daily', 'build_target', 'converter', 'first_round', 'second_round']"
                         label="游戏轮次"
                         variant="outlined"
                         hide-details
+                        dense
                     ></v-select>
+                </v-col>
+                <v-col cols="5" class="d-flex justify-end align-center">
+                    <v-btn
+                        color="primary"
+                        class="mx-1"
+                        @click="handleSearch"
+                        variant="elevated"
+                    >
+                        查找游戏
+                    </v-btn>
+                    <v-btn
+                        color="success"
+                        class="mx-1"
+                        @click="() => console.log('添加游戏')"
+                        variant="elevated"
+                    >
+                        添加游戏
+                    </v-btn>
+                    <v-btn
+                        color="info"
+                        class="mx-1"
+                        @click="refreshGames"
+                        variant="elevated"
+                    >
+                        刷新
+                    </v-btn>
                 </v-col>
             </v-row>
         </template>
+        <v-data-table
+            :headers="headers"
+            :items="games"
+        >
+            <template v-slot:item.action="{ item }">
+                <v-btn
+                    icon
+                    @click="() => console.log(item.name)"
+                >
+                    <v-icon>mdi-delete</v-icon>
+                </v-btn>
+                <v-btn
+                    icon
+                    @click="() => console.log(item.name)"
+                >
+                    <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+            </template>
+        </v-data-table>
     </v-card>
 </template>
 
 <script setup lang="ts" name="WxMiniGame">
-import { ref, computed } from 'vue';
+import { ref, onMounted } from 'vue';
+import { findAllWxGame, searchGame, type SearchGame } from '@/api/game';
 
-const search = ref('');
+const searchName = ref('');
+const case_type = ref('daily'); // 保持和 v-select 默认一致
+const games = ref([]);
+const loading = ref(false); // 新增 loading 状态
 
-const gameRound = ref('第一轮');
-const gameType = ref('全部');
-
-// 示例游戏数据
-const games = ref([
-    { name: '游戏1', type: '单机游戏' },
-    { name: '游戏2', type: '网络游戏' },
-    { name: '游戏3', type: '单机游戏' },
+const headers = ref([
+    { text: 'package', value: 'package'},
+    { text: 'type', value: 'type'},
+    { text: 'case_type', value: 'case_type', sortable: true},
+    { text: 'game_engine', value: 'game_engin', sortable: true },
+    { text: 'game_url', value: 'game_url'},
+    { text: 'game_name', value: 'game_name'},
+    { text: 'game_id', value: 'game_id', sortable: true },
+    { text: 'action', value: 'action', sortable: false }
 ]);
 
-// 过滤后的游戏列表
-const filteredGames = computed(() => {
-    return games.value.filter(game => {
-        const matchesSearch = game.name.includes(search.value);
-        const matchesType = gameType.value === '全部' || game.type === gameType.value;
-        return matchesSearch && matchesType;
-    });
+onMounted(async() => {
+    await refreshGames();
 });
+
+const refreshGames = async () => {
+    if (loading.value) return;
+    loading.value = true;
+    try {
+        console.log('刷新游戏列表');
+        searchName.value = '';
+        case_type.value = 'daily'; // 恢复默认值
+        const res:any = await findAllWxGame();
+        if (res.status) {
+            games.value = res.games;
+        } else {
+            console.error('刷新游戏列表失败:', res.message);
+        }
+    } finally {
+        loading.value = false;
+    }
+};
+
+const handleSearch = async() => {
+    if (loading.value) return;
+    loading.value = true;
+    try {
+        console.log('搜索游戏:', searchName.value, '类型:', case_type.value);
+        const SearchDate:SearchGame = {
+            game_name: searchName.value,
+            case_type: case_type.value,
+            game_type: "weixin_minigame"
+        };
+        const res:any = await searchGame(SearchDate);
+        if (res.status) {
+            games.value = res.games;
+            if (games.value === null) {
+                console.warn('没有找到匹配的游戏');
+                games.value = [];
+            }
+            console.log('搜索结果:', games.value);
+        } else {
+            console.error('搜索游戏失败:', res.message);
+        }
+    } finally {
+        loading.value = false;
+    }
+};
 </script>
