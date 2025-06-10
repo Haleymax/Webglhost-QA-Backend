@@ -8,12 +8,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Add_game: typeof import('./components/game/add_game.vue')['default']
     Add_node: typeof import('./components/node/add_node.vue')['default']
     Add_phone: typeof import('./components/phone/add_phone.vue')['default']
     Add_watcher: typeof import('./components/watcher/add_watcher.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Updata_node: typeof import('./components/node/update_node.vue')['default']
+    Update_game: typeof import('./components/game/update_game.vue')['default']
     Update_node: typeof import('./components/node/update_node.vue')['default']
     Update_phone: typeof import('./components/phone/update_phone.vue')['default']
     Update_redis: typeof import('./components/watcher/update_redis.vue')['default']

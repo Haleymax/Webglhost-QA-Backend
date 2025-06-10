@@ -43,6 +43,12 @@ const routes = [
     path: '/phone',
     name: 'Phone',
     component: () => import('@/pages/phone/phone_manage.vue'),
+  },
+  {
+    path: '/game',
+    name: 'GameManage',
+    component: () => import('@/pages/game/game_manage.vue'),
+    
   }
 
 ]
