@@ -57,3 +57,10 @@ export const updateGame = (data: Game) => {
     data: data
   });
 }
+
+export const updateByFeishu = () => {
+  return request({
+    url: '/api/game/feishu',
+    method: 'get',
+  })
+}
