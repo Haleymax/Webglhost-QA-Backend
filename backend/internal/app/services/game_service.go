@@ -57,11 +57,10 @@ func (gs *GameServiceImpl) DeleteGame(game models.Game) error {
 
 func (gs *GameServiceImpl) UpdateGame(game models.Game) error {
 	exists, _ := gs.FindGameById(game.ID)
-	log.Println(exists)
-	log.Println(reflect.DeepEqual(exists, models.Game{}))
 	if reflect.DeepEqual(exists, models.Game{}) {
 		return errors.New("game not exist")
 	}
+	log.Printf("game : %s exists, update", game.GameName)
 	return gs.gameRepo.Update(game)
 }
 
@@ -108,7 +107,6 @@ func (gs *GameServiceImpl) FindByQuery(query models.GameRequest) (models.Game, e
 	if err != nil {
 		return models.Game{}, err
 	}
-	log.Println(result)
 	if len(result) == 1 {
 		return result[0], nil
 	} else {
@@ -147,16 +145,16 @@ func (gs *GameServiceImpl) UpdateMongoByFeishu(messageChan *chan string, config 
 			CaseType: game.CaseType[0],
 		}
 		exist, _ := gs.FindByQuery(QuerGame)
-		if reflect.DeepEqual(exist, models.Game{}) {
+		if !reflect.DeepEqual(exist, models.Game{}) {
 			exist.GameUrl = game.GameUrl
 			NewType := make([]string, 2)
-			NewType = append(NewType, "daily")
-			NewType = append(NewType, game.CaseType[0])
+			NewType[0] = "daily"
+			NewType[1] = game.CaseType[0]
 			exist.CaseType = NewType
 			if err := gs.UpdateGame(exist); err != nil {
-				process_msg = "game " + game.GameName + "exist, update game faild" + err.Error()
+				process_msg = "game " + game.GameName + " exist, update game faild" + err.Error()
 			} else {
-				process_msg = "game " + game.GameName + "exist, update game success"
+				process_msg = "game " + game.GameName + " exist, update game success"
 			}
 			*messageChan <- process_msg
 		} else {

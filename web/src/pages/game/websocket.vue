@@ -115,7 +115,7 @@ const sendMessage = async () => {
     const res: any = await updateByFeishu();
     if (res.status) {
       addMessage("请求成功");
-      alert("请求成功");
+      console.log("请求成功")
     } else {
       addMessage("请求失败");
       alert("请求失败");

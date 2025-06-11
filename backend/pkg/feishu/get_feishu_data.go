@@ -182,7 +182,7 @@ func (f *FeishuClient) GetFeishuSheetData() error {
 
 	for i, value := range values {
 		check := value.([]interface{})
-		if check[0] == nil || check[1] == nil || check[3] == nil {
+		if check[0] == nil || check[1] == nil || check[3] == nil || check[16] == nil {
 			continue
 		}
 		urlSlice, ok := check[4].([]interface{})
@@ -221,7 +221,7 @@ func (f *FeishuClient) GetFeishuSheetData() error {
 		gameName := check[0].(string)
 		gameType := check[1].(string)
 		CaseType := make([]string, 2)
-		CaseType[0] = "daily"
+		CaseType[0] = check[16].(string)
 		gameId := i
 		gameRecord := models.Game{
 			Package:    Package,
