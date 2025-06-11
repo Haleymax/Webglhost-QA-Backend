@@ -13,6 +13,7 @@ type Config struct {
 	REMOTE RemoteConfig `mapstructure:"remote"`
 	MONGO  MongoConfig  `mapstructure:"mongo"`
 	REDIS  RedisConfig  `mapstructure:"redis"`
+	FEISHU FeishuConfig `mapstructure:"feishu"`
 }
 
 func LoadConfig() *Config {

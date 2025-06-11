@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/Webglhost-QA-Backend/backend/config"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/models"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/services"
 	"github.com/gin-gonic/gin"
@@ -12,11 +13,15 @@ import (
 
 type GameController struct {
 	GameService services.GameService
+	MessageChan chan string
+	config      config.Config
 }
 
-func NewGameController(gameService services.GameService) *GameController {
+func NewGameController(gameService services.GameService, config config.Config) *GameController {
 	return &GameController{
 		GameService: gameService,
+		MessageChan: make(chan string),
+		config:      config,
 	}
 }
 
@@ -199,6 +204,12 @@ func (gc *GameController) WebSocket(c *gin.Context) {
 	}
 	defer ws.Close()
 
+	go func() {
+		for msg := range gc.MessageChan {
+			ws.WriteMessage(websocket.TextMessage, []byte(msg))
+		}
+	}()
+
 	for {
 		messageType, message, err := ws.ReadMessage()
 		if err != nil {
@@ -217,4 +228,14 @@ func (gc *GameController) WebSocket(c *gin.Context) {
 			return
 		}
 	}
+}
+
+func (gc *GameController) UpdateByFeishu(c *gin.Context) {
+	go func() {
+		gc.GameService.UpdateMongoByFeishu(&gc.MessageChan, gc.config.FEISHU)
+	}()
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successful get commond",
+		"status":  true,
+	})
 }

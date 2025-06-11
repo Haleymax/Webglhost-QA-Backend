@@ -1,6 +1,6 @@
 mysql:
   host: "localhost"
-  port: "3308"
+  port: "3306"
   user: "root"
   password: "root"
   dbname: "qa"
@@ -20,6 +20,15 @@ remote:
   adb_path: "/usr/local/platform-tools/"
 
 redis:
-  host: "127.0.0.1"
+  host: "10.86.97.133"
   port: 6379
   db: 0
+
+feishu:
+  form_api : "https://open.feishu.cn/open-apis/sheets/v2/spreadsheets"
+  user_token_api : "https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal"
+  sheetToken : "QOmLsuG1xhnjdgt55RwcTu4infe"
+  tap_sheetId : "YEZq2R"
+  app_id : "cli_a78cf6cbd299100c"
+  app_secret : "MgyNcjG6s8ztJ2er7JHKCbemw6YQgyqS"
+  range: "A1:U500"
