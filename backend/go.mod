@@ -4,6 +4,7 @@ go 1.23.5
 
 require (
 	github.com/gin-gonic/gin v1.10.0
+	github.com/gorilla/websocket v1.5.3
 	github.com/redis/go-redis/v9 v9.9.0
 	github.com/spf13/viper v1.20.1
 	go.mongodb.org/mongo-driver v1.17.3

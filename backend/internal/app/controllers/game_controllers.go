@@ -1,20 +1,27 @@
 package controllers
 
 import (
+	"github.com/Webglhost-QA-Backend/backend/config"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/models"
 	"github.com/Webglhost-QA-Backend/backend/internal/app/services"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"time"
 )
 
 type GameController struct {
 	GameService services.GameService
+	MessageChan chan string
+	config      config.Config
 }
 
-func NewGameController(gameService services.GameService) *GameController {
+func NewGameController(gameService services.GameService, config config.Config) *GameController {
 	return &GameController{
 		GameService: gameService,
+		MessageChan: make(chan string),
+		config:      config,
 	}
 }
 
@@ -176,6 +183,59 @@ func (gc *GameController) DeleteGame(c *gin.Context) {
 	log.Println("Successful delete game info")
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Successful delete game info",
+		"status":  true,
+	})
+}
+
+func (gc *GameController) WebSocket(c *gin.Context) {
+	wsUpgrader := websocket.Upgrader{
+		HandshakeTimeout: 10 * time.Second,
+		ReadBufferSize:   1024,
+		WriteBufferSize:  1024,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+
+	ws, err := wsUpgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer ws.Close()
+
+	go func() {
+		for msg := range gc.MessageChan {
+			ws.WriteMessage(websocket.TextMessage, []byte(msg))
+		}
+	}()
+
+	for {
+		messageType, message, err := ws.ReadMessage()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		switch messageType {
+		case websocket.TextMessage:
+			log.Printf("处理文本信息:%s\n", string(message))
+			ws.WriteMessage(websocket.TextMessage, message)
+		case websocket.CloseMessage:
+			log.Println("关闭websocket")
+			return
+		default:
+			log.Println("未知消息")
+			return
+		}
+	}
+}
+
+func (gc *GameController) UpdateByFeishu(c *gin.Context) {
+	go func() {
+		gc.GameService.UpdateMongoByFeishu(&gc.MessageChan, gc.config.FEISHU)
+	}()
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successful get commond",
 		"status":  true,
 	})
 }

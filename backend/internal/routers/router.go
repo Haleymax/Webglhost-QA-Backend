@@ -26,7 +26,7 @@ func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mon
 	nodeController := controllers.NewNodeController(nodeService, remoteService)
 	watcherController := controllers.NewWatcherController(watcherService)
 	phoneController := controllers.NewPhoneController(phoneService)
-	gameController := controllers.NewGameController(gameService)
+	gameController := controllers.NewGameController(gameService, *cfg)
 
 	initControler := controllers.NewInitController(db)
 
@@ -71,5 +71,7 @@ func SetupRouter(router *gin.Engine, db *gorm.DB, cfg *config.Config, mongo *mon
 		game.PUT("/update", gameController.UpdateGameInfo)
 		game.POST("/add", gameController.AddGame)
 		game.DELETE("/remove", gameController.DeleteGame)
+		game.GET("/ws", gameController.WebSocket)
+		game.GET("/feishu", gameController.UpdateByFeishu)
 	}
 }
