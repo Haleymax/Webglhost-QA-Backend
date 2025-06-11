@@ -171,4 +171,6 @@ func (gs *GameServiceImpl) UpdateMongoByFeishu(messageChan *chan string, config 
 		}
 
 	}
+	end_msg := "end run script"
+	*messageChan <- end_msg
 }
