@@ -1,3 +1,5 @@
 .idea
 backend/media
 backend/frontend/dist
+backend/dist
+backend/public

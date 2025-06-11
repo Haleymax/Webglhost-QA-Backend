@@ -21,7 +21,7 @@ export interface GetPhoneInfo {
 
 export const addNode = (node: Node) => {
     return request({
-        url: '/api/nodes/add',
+        url: '/api/v1/nodes/add',
         method: 'post',
         data: node
     })
@@ -29,14 +29,14 @@ export const addNode = (node: Node) => {
 
 export const getNodes = () => {
     return request({
-        url: '/api/nodes/get',
+        url: '/api/v1/nodes/get',
         method: 'get'
     })
 }
 
 export const updataNode = (node: updata) => {
     return request({
-        url: '/api/nodes/updata',
+        url: '/api/v1/nodes/updata',
         method: 'put',
         data: node
     })
@@ -44,7 +44,7 @@ export const updataNode = (node: updata) => {
 
 export const deleteNode = (host: string) => {
     return request({
-        url: '/api/nodes/remove',
+        url: '/api//v1/nodes/remove',
         method: 'delete',
         data: host
     })
@@ -52,7 +52,7 @@ export const deleteNode = (host: string) => {
 
 export const uploadFile = (data: FormData) => {
     return request({
-        url: '/api/nodes/upload',
+        url: '/api/v1/nodes/upload',
         method: 'post',
         data: data,
     })
@@ -60,7 +60,7 @@ export const uploadFile = (data: FormData) => {
 
 export const getPhoneList = (host: string) => {
     return request({
-        url: '/api/nodes/get_phone',
+        url: '/api/v1/nodes/get_phone',
         method: 'get',
         params: { host }
     })
@@ -69,7 +69,7 @@ export const getPhoneList = (host: string) => {
 
 export const getPhoneInfo = (data: GetPhoneInfo) => {
     return request({
-        url: '/api/nodes/phone_info',
+        url: '/api/v1/nodes/phone_info',
         method: 'post',
         data: data
     })
