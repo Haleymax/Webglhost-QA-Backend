@@ -7,6 +7,7 @@ import (
 	"github.com/Webglhost-QA-Backend/backend/pkg/database"
 	"github.com/gin-gonic/gin"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -27,6 +28,20 @@ func main() {
 		log.Fatalf("Failed to initialize mongo:%v", err)
 	}
 	defer database.MongoClose()
+
+	// 静态文件服务 - 指向你的dist文件夹
+	router.Static("/assets", "./dist/assets")
+	router.StaticFile("/favicon.ico", "./dist/favicon.ico")
+
+	// 处理前端路由 - 所有未匹配的路径都返回index.html
+	router.NoRoute(func(c *gin.Context) {
+		path := c.Request.URL.Path
+		if len(path) >= 3 && path[:3] == "/v/" {
+			c.File("./dist/index.html") // 返回 Vue 的 index.html
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Not found"})
+		}
+	})
 
 	redisClient := new(cache_client.Redis)
 	redisClient.Cfg = cfg.REDIS

@@ -22,21 +22,21 @@ export interface SearchGame {
 
 export const findAllWxGame = () => {
   return request({
-    url: '/api/game/find_wx',
+    url: '/api/v1/game/find_wx',
     method: 'get'
   });
 }
 
 export const findRpkGame = () => {
   return request({
-    url: '/api/game/find_rpk',
+    url: '/api/v1/game/find_rpk',
     method: 'get'
   })
 }
 
 export const searchGame = (data: SearchGame) => {
   return request({
-    url: '/api/game/find_by_type',
+    url: '/api/v1/game/find_by_type',
     method: 'post',
     data: data
 });
@@ -44,7 +44,7 @@ export const searchGame = (data: SearchGame) => {
 
 export const addGame = (data: Game) => {
   return request({
-    url: '/api/game/add',
+    url: '/api/v1/game/add',
     method: 'post',
     data: data
   });
@@ -52,7 +52,7 @@ export const addGame = (data: Game) => {
 
 export const updateGame = (data: Game) => {
   return request({
-    url: '/api/game/update',
+    url: '/api/v1/game/update',
     method: 'put',
     data: data
   });
@@ -60,7 +60,7 @@ export const updateGame = (data: Game) => {
 
 export const updateByFeishu = () => {
   return request({
-    url: '/api/game/feishu',
+    url: '/api/v1/game/feishu',
     method: 'get',
   })
 }

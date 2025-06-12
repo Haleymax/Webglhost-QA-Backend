@@ -4,7 +4,7 @@
       <v-list-item title="菜单" subtitle=""></v-list-item>
       <v-divider></v-divider>
       <v-list>
-        <v-list-item to="/home">
+        <v-list-item to="/v/home">
           <v-list-item-icon>
             <v-icon>mdi-home</v-icon>
           </v-list-item-icon>
@@ -13,7 +13,7 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-item to="/upload">
+        <v-list-item to="/v/upload">
           <v-list-item-icon>
             <v-icon>mdi-upload</v-icon>
           </v-list-item-icon>
@@ -22,7 +22,7 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-item to="/phone">
+        <v-list-item to="/v/phone">
           <v-list-item-icon>
             <v-icon>mdi-database</v-icon>
           </v-list-item-icon>
@@ -31,7 +31,7 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-item to="/device">
+        <v-list-item to="/v/device">
           <v-list-item-icon>
             <v-icon>mdi-cloud-arrow-up-outline</v-icon>
           </v-list-item-icon>
@@ -40,7 +40,7 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-          <v-list-item to="/watcher">
+          <v-list-item to="/v/watcher">
             <v-list-item-icon>
               <v-icon>mdi-eye</v-icon>
             </v-list-item-icon>
@@ -49,7 +49,7 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-item to="/game">
+        <v-list-item to="/v/game">
           <v-list-item-icon>
             <v-icon>mdi-gamepad-variant</v-icon>
           </v-list-item-icon>

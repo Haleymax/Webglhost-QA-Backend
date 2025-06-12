@@ -10,42 +10,42 @@ import Index from '@/pages/index.vue'
 
 const routes = [
   {
-    path: '/',
+    path: '/v/',
     name: 'Index',
     component: Index,
   },
   {
-    path: '/upload',
+    path: '/v/upload',
     name: 'Upload',
     component: () => import('@/pages/device/upload.vue'),
   },
   {
-    path: '/device',
+    path: '/v/device',
     name: 'Device',
     component: () => import('@/pages/device/device_manage.vue'),
   },
   {
-    path: '/updata',
+    path: '/v/updata',
     name: 'Updata',
     component: () => import('@/components/node/update_node.vue'),
   },
   {
-    path: '/home',
+    path: '/v/home',
     name: 'Home',
     component: () => import('@/pages/home/home.vue'),
   },
   {
-    path: '/watcher',
+    path: '/v/watcher',
     name: 'Watcher',
     component: () => import('@/pages/watcher/watcher_manage.vue'),
   },
   {
-    path: '/phone',
+    path: '/v/phone',
     name: 'Phone',
     component: () => import('@/pages/phone/phone_manage.vue'),
   },
   {
-    path: '/game',
+    path: '/v/game',
     name: 'GameManage',
     component: () => import('@/pages/game/game_manage.vue'),
     
