@@ -12,14 +12,14 @@ export interface Watcher {
 
 export const getWatchers = () => {
   return request({
-    url: '/api/watchers/find',
+    url: '/api/v1/watchers/find',
     method: 'get'
   })
 }
 
 export const addWatcher = (data: Watcher) => {
   return request({
-    url: '/api/watchers/add',
+    url: '/api/v1/watchers/add',
     method: 'post',
     data
   })
@@ -28,7 +28,7 @@ export const addWatcher = (data: Watcher) => {
 
 export const deleteWatcher = (data: Watcher) => {
   return request({
-    url: '/api/watchers/delete',
+    url: '/api/v1/watchers/delete',
     method: 'delete',
     data
   })
@@ -38,7 +38,7 @@ export const deleteWatcher = (data: Watcher) => {
 
 export const updateWatcher = (data: Watcher) => {
   return request({
-    url: '/api/watchers/update',
+    url: '/api/v1/watchers/update',
     method: 'put',
     data
   })
@@ -47,7 +47,7 @@ export const updateWatcher = (data: Watcher) => {
 
 export const updateRedis = (data: any) => {
   return request({
-    url: '/api/watchers/refresh',
+    url: '/api/v1/watchers/refresh',
     method: 'post',
     data
   })

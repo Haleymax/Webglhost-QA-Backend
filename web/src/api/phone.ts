@@ -13,7 +13,7 @@ export interface Phone {
 
 export const addPhone = (phone: Phone) => {
     return request({
-        url: '/api/phone/add',
+        url: '/api/v1/phone/add',
         method: 'post',
         data: phone
     });
@@ -21,14 +21,14 @@ export const addPhone = (phone: Phone) => {
 
 export const getAllPhoneInfo = () => {
     return request({
-        url: '/api/phone/find',
+        url: '/api/v1/phone/find',
         method: 'get'
     });
 }
 
 export const updataPhone = (phone: Phone) => {
     return request({
-        url: '/api/phone/update',
+        url: '/api/v1/phone/update',
         method: 'put',
         data: phone
     });
@@ -36,7 +36,7 @@ export const updataPhone = (phone: Phone) => {
 
 export const deletePhone = (serial: string) => {    
     return request({
-        url: '/api/phone/remove'+`?serial=${serial}`,
+        url: '/api/v1/phone/remove'+`?serial=${serial}`,
         method: 'delete',
     });
 }
