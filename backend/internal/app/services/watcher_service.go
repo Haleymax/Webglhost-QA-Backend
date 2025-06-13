@@ -66,56 +66,32 @@ func (s *WatcherServiceImpl) RefreshCache(env, runtime string) error {
 	for _, brand := range brands {
 		permissionFilter := map[string]string{
 			"brand": brand,
-			"tag":   "PERMISSION",
+			"tag":   "permission",
 		}
-		permissionWatchers, err2 := s.watcherRepo.FindByCategory(permissionFilter)
-		if err2 != nil {
-			return err2
+		permissionWatchers, err := s.watcherRepo.FindByCategory(permissionFilter)
+		if err != nil {
+			return err
 		}
-		permissionDatas := cache_client.Convert(permissionWatchers, brand, permissionFilter["tag"])
-		for _, oneData := range permissionDatas {
-			s.redis.SetKey(space, env, runtime, cache_client.WatcherCache(oneData))
-		}
-
-		installFilter := map[string]string{
-			"brand": brand,
-			"tag":   "PERMISSION",
-		}
-		installWatchers, err3 := s.watcherRepo.FindByCategory(installFilter)
-		if err3 != nil {
-			return err2
-		}
-		installDatas := cache_client.Convert(installWatchers, brand, installFilter["tag"])
-		for _, oneData := range installDatas {
-			s.redis.SetKey(space, env, runtime, cache_client.WatcherCache(oneData))
-		}
-	}
-
-	for _, brand := range brands {
-		permissionFilter := map[string]string{
-			"brand": brand,
-			"tag":   "INSTALL",
-		}
-		permissionWatchers, err2 := s.watcherRepo.FindByCategory(permissionFilter)
-		if err2 != nil {
-			return err2
-		}
-		permissionDatas := cache_client.Convert(permissionWatchers, brand, permissionFilter["tag"])
-		for _, oneData := range permissionDatas {
-			s.redis.SetKey(space, env, runtime, cache_client.WatcherCache(oneData))
+		if len(permissionWatchers) > 0 {
+			permissionDatas := cache_client.Convert(permissionWatchers, brand, permissionFilter["tag"])
+			for _, oneData := range permissionDatas {
+				s.redis.SetKey(space, env, runtime, cache_client.WatcherCache(oneData))
+			}
 		}
 
 		installFilter := map[string]string{
 			"brand": brand,
-			"tag":   "INSTALL",
+			"tag":   "install",
 		}
-		installWatchers, err3 := s.watcherRepo.FindByCategory(installFilter)
-		if err3 != nil {
-			return err2
+		installWatchers, err := s.watcherRepo.FindByCategory(installFilter)
+		if err != nil {
+			return err
 		}
-		installDatas := cache_client.Convert(installWatchers, brand, installFilter["tag"])
-		for _, oneData := range installDatas {
-			s.redis.SetKey(space, env, runtime, cache_client.WatcherCache(oneData))
+		if len(installWatchers) > 0 {
+			installDatas := cache_client.Convert(installWatchers, brand, installFilter["tag"])
+			for _, oneData := range installDatas {
+				s.redis.SetKey(space, env, runtime, cache_client.WatcherCache(oneData))
+			}
 		}
 	}
 	return nil

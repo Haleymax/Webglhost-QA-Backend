@@ -89,14 +89,14 @@ func (r *Redis) SetKey(space, env, runtime string, watcher WatcherCache) error {
 		"event":    watcher.Event,
 	}
 	value_json_str, _ := json.Marshal(value)
-	_, err := r.Client.Set(ctx, pattern, value_json_str, 0).Result()
+	_, err := r.Client.LPush(ctx, pattern, value_json_str).Result()
 	return err
 }
 
 func Get_all_brand_from_watcher(watchers []*models.Watcher) []string {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Printf("error：%v\n", r)
+			log.Printf("error：%v\n", r)zhi
 		}
 	}()
 	var brands []string
